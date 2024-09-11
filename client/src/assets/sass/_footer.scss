@@ -1,0 +1,40 @@
+$footer-background-color: #333;
+$footer-text-color: #fff;
+$footer-link-color: #f05454;
+$footer-link-hover-color: #ff6b6b;
+
+.footer {
+  background-color: #333;
+  color: #fff;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 2rem 0;
+  text-align: center;
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+
+    .footer-left {
+      font-size: 1.6rem;
+    }
+
+    .footer-right {
+      .footer-link {
+        color: $footer-link-color;
+        text-decoration: none;
+        margin: 0 1rem;
+        font-size: 1.6rem;
+
+        &:hover {
+          color: $footer-link-hover-color;
+        }
+      }
+    }
+  }
+}

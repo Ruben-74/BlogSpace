@@ -1,0 +1,43 @@
+//  RESET
+// Variables pour les couleurs
+$primary-color: #1a1a1a;
+$accent-color: #f05454;
+$link-color: #007bff;
+$background-color: #f0f0f0;
+$white-color: #fff;
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Relaway", sans-serif;
+  font-size: 1.6rem;
+  color: #333;
+}
+
+a {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.container {
+  padding-top: 24px;
+  max-width: 1200px;
+  margin: 2rem auto;
+  text-align: center;
+}

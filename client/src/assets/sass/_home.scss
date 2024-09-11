@@ -1,0 +1,112 @@
+@import "_globals.scss";
+
+.posts-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+  font-family: "Josefin Sans";
+}
+
+.posts-title {
+  text-align: start;
+  font-size: 3.5rem;
+  margin: 2rem 0;
+  color: #333;
+}
+
+.post-card {
+  display: flex;
+  align-items: flex-start;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  gap: 2rem;
+  overflow: hidden;
+  margin-bottom: 4rem;
+  transition: all 0.3s ease;
+  border: transparent;
+  transform-origin: center; // Assure que la transformation se fait à partir du centre
+  will-change: transform;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.post-image {
+  flex: 1;
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+}
+
+.post-content {
+  display: flex;
+  margin-top: 2rem;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+
+  .post-title {
+    font-size: 3rem;
+    margin: 0 0 0.5rem;
+    color: #000;
+    border-bottom: 2px solid $accent-color;
+    width: 80%;
+
+    &:hover {
+      color: $accent-color;
+    }
+  }
+
+  .post-description {
+    font-size: 1.6rem;
+    margin: 0 0 1rem;
+    color: $primary-color;
+  }
+
+  .post-categories {
+    margin-bottom: 1rem;
+
+    span {
+      display: inline-block;
+      background-color: $accent-color;
+      color: #fff; // Couleur du texte en blanc pour contraster avec l'orange
+      padding: 5px 15px; // Espacement intérieur
+      border-radius: 3px; // Coins arrondis
+      font-size: 1.4rem; // Taille de la police
+      font-weight: 600; // Poids de la police
+      text-align: center;
+      margin: 2px; // Espacement autour du tag
+      white-space: nowrap; // Empêche le retour à la ligne
+    }
+  }
+
+  .read-more-button {
+    display: block;
+    width: 50%;
+    padding: 1rem 2rem;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 24px;
+    color: rgb(16, 14, 14);
+    border-radius: 4px;
+    padding: 8px 24px;
+    background-color: rgb(227, 231, 236);
+
+    &:hover {
+      background-color: rgb(197, 205, 215);
+      opacity: 1;
+    }
+  }
+}
+
+.loading-message {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.5rem;
+  color: #666;
+}
