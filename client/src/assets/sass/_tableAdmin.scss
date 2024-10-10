@@ -1,0 +1,155 @@
+// Variables de couleur
+$primary-color: #1a1a1a;
+$accent-color: #f05454;
+$link-color: #007bff;
+$background-color: #f0f0f0;
+$white-color: #fff;
+$hover-color: #e0e0e0; // Couleur de survol pour les lignes du tableau
+
+// Styles globaux pour la section
+section {
+  padding: 4rem;
+  border-radius: 8px;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  h1 {
+    color: $primary-color;
+    font-size: 3.5rem;
+    text-align: center;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .container-list {
+    display: flex;
+    justify-content: space-between; // Aligner le titre à gauche et le bouton à droite
+    align-items: center;
+    margin-bottom: 20px;
+
+    .btn-create {
+      background-color: $link-color;
+      color: $white-color;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px; // Espacement entre l'icône et le texte
+
+      &:hover {
+        background-color: darken($link-color, 10%);
+      }
+
+      &:focus {
+        outline: 2px solid $link-color;
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: $white-color;
+    font-family: "Relaway", sans-serif;
+
+    thead {
+      background-color: $primary-color;
+      color: $white-color;
+
+      th {
+        padding: 1.5rem;
+        text-align: start;
+        font-weight: bold;
+
+        &.buttons {
+          text-align: center;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        &:nth-child(odd) {
+          background-color: #fafafa;
+        }
+
+        &:nth-child(even) {
+          background-color: #ffffff;
+        }
+
+        &:hover {
+          background-color: $hover-color; // Changer la couleur de fond au survol
+        }
+
+        td {
+          padding: 1.5rem;
+          text-align: start;
+          border-bottom: 1px solid #ddd;
+
+          img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%; // Pour un effet circulaire
+            object-fit: cover; // Pour s'assurer que l'image ne se déforme pas
+          }
+
+          .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+
+            .btn-edit,
+            .btn-delete {
+              background-color: transparent;
+              color: $white-color;
+              border: none;
+              padding: 8px 12px;
+              border-radius: 4px;
+              cursor: pointer;
+              transition: background-color 0.3s ease;
+              font-size: 14px;
+              display: flex;
+              align-items: center;
+
+              &:focus {
+                outline: 1px solid $white-color;
+              }
+
+              i {
+                font-size: 16px; // Ajuster la taille de l'icône si nécessaire
+              }
+
+              &:hover {
+                background-color: lighten(#ddd, 10%);
+              }
+            }
+
+            .btn-edit {
+              background-color: green;
+
+              &:hover {
+                background-color: darken(green, 10%);
+              }
+            }
+
+            .btn-delete {
+              background-color: $accent-color;
+
+              &:hover {
+                background-color: darken($accent-color, 10%);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

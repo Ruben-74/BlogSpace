@@ -5,6 +5,7 @@ $footer-link-hover-color: #ff6b6b;
 
 .footer {
   background-color: #333;
+  font-family: "Josefin Sans";
   color: #fff;
   position: fixed;
   bottom: 0;
@@ -34,6 +35,27 @@ $footer-link-hover-color: #ff6b6b;
         &:hover {
           color: $footer-link-hover-color;
         }
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-content {
+    flex-direction: column; // Aligner les éléments verticalement
+    align-items: center; // Centrer les éléments horizontalement
+    text-align: center; // Centrer le texte
+
+    .footer-left,
+    .footer-right {
+      font-size: 1.4rem; // Réduire la taille de la police pour les petits écrans
+      margin-bottom: 1rem; // Ajouter un espacement vertical entre les sections
+    }
+
+    .footer-right {
+      .footer-link {
+        margin: 0.5rem 0; // Espacement vertical entre les liens
+        font-size: 1.4rem; // Réduire la taille de la police des liens
       }
     }
   }

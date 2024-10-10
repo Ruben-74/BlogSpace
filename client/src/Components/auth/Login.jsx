@@ -1,25 +1,60 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Form from "../Partials/Form";
 import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../../store/user/Context.jsx";
+import { useDispatch, useSelector } from "react-redux";
 import { FaSpaceShuttle } from "react-icons/fa";
+import { login, setMsg, updateField } from "../../store/slicesRedux/user";
+import { toggleMenu } from "../../store/slicesRedux/menu";
 
 function Login() {
-  const state = useContext(UserContext);
-
-  const [user, setUser] = useState({ username: "joey", password: "aze" });
-  const [msg, setMsg] = useState(null);
-
+  // le state de l'utilisateur
+  const user = useSelector((state) => state.user);
+  // le state du menu
+  const menu = useSelector((state) => state.menu);
+  // on récupère la fonction dispatch pour envoyer des actions
+  const dispatch = useDispatch();
+  // on récupère la fonction navigate pour la redirection
   const navigate = useNavigate();
 
-  function submitHandler(e) {
+  useEffect(() => {
+    if (menu.isOpen) dispatch(toggleMenu());
+    // on remet le mot de passe à vide pour éviter qu'il soit prérempli si on revient sur la page
+    return () => {
+      dispatch(updateField({ username: user.email, password: "" }));
+    };
+  }, []);
+
+  async function submitHandler(e) {
     e.preventDefault();
-    if (!user.username || !user.password) {
-      setMsg("Please fill in all fields");
+
+    if (!user.email || !user.password) {
+      dispatch(setMsg("Remplissez tous les champs"));
       return;
     }
-    state.login(user.username);
-    navigate("/");
+
+    try {
+      const response = await fetch("http://localhost:9000/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        dispatch(login(data)); // Dispatch la connexion avec les infos de l'utilisateur
+        navigate("/"); // Rediriger vers la page d'accueil
+      } else {
+        const errorData = await response.json();
+        console.log(errorData);
+        dispatch(loginFailed({ error: errorData.msg })); // Gestion d'une erreur de login
+      }
+    } catch (err) {
+      dispatch(setMsg("Erreur lors de la connexion. Veuillez réessayer.")); // Gestion d'une erreur de connexion
+    }
   }
 
   return (
@@ -31,14 +66,9 @@ function Login() {
       {/* Div pour regrouper le paragraphe et le lien */}
       <div className="info-line">
         <p>New in this platform?</p>
-        <Link to={"/register"}>Sign up</Link>
+        <Link to={"/auth/register"}>Sign up</Link>
       </div>
-      <Form
-        submitHandler={submitHandler}
-        user={user}
-        setUser={setUser}
-        msg={msg}
-      >
+      <Form submitHandler={submitHandler} isRegister={false}>
         <button type="submit">Login</button>
       </Form>
     </section>

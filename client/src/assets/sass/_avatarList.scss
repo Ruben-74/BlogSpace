@@ -1,0 +1,97 @@
+.avatar-list {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-list__title {
+  font-size: 1.7rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.avatar-list__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.avatar-list__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.avatar-list__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.avatar-list__option:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-list__radio {
+  display: none;
+}
+
+.avatar-list__label {
+  display: block;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.avatar-list__label::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  transition: border-color 0.2s;
+}
+
+.avatar-list__radio:checked + .avatar-list__label::before {
+  border-color: #007bff;
+}
+
+.avatar-list__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-list__button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.avatar-list__button:hover {
+  background-color: #0056b3;
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

@@ -1,0 +1,30 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+ul.stats-list {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+}
+
+.stats-item {
+  display: flex; /* Utilise flexbox pour aligner les éléments en ligne */
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center; /* Centre verticalement le texte et le cercle */
+  margin-bottom: 15px; /* Espace entre les items */
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.stats-item span {
+  font-size: 16px; /* Ajustez la taille du texte */
+}
+
+.circular-progress-bar {
+  width: 40px; /* Taille du cercle */
+  height: 40px;
+}

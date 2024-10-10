@@ -1,13 +1,18 @@
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import UserProvider from "./store/user/Context.jsx";
 import App from "./App.jsx";
 import "./assets/sass/main.scss";
 
+import { Provider } from "react-redux";
+import store from "./store/index";
+import { PostProvider } from "./store/post/PostContext.jsx";
+
 createRoot(document.getElementById("root")).render(
-  <UserProvider>
+  <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <PostProvider>
+        <App />
+      </PostProvider>
     </BrowserRouter>
-  </UserProvider>
+  </Provider>
 );

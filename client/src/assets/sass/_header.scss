@@ -1,101 +1,173 @@
-@import "globals.scss";
-
-// Style général de l'en-tête
 header {
-  padding: 1.5rem 2rem; // Ajout de padding horizontal pour plus d'espace
+  padding: 1.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: $white-color; // Fond blanc pour meilleure lisibilité
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); // Ajout d'ombre pour profondeur
+  background-color: $white-color;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
 
-  // Titre avec l'icône de la navette spatiale (logo et texte alignés)
-  .logo-title {
+  .header-content {
     display: flex;
-    align-items: center; // Assure que le logo et le texte soient bien alignés verticalement
-    font-size: 2.5rem; // Taille légèrement réduite pour un meilleur équilibre
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .logo-title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    font-size: 2.5rem;
     font-weight: bold;
     font-family: "Josefin Sans", sans-serif;
     color: $primary-color;
     text-decoration: none;
 
     svg {
-      margin-right: 1rem; // Ajout d'espace entre le logo et le texte
-      fill: $accent-color; // Couleur de l'icône de la navette spatiale
-      transform: rotateY(0deg); // Si la rotation n'est pas souhaitée, on met 0
+      margin-right: 1rem;
+      fill: $accent-color;
     }
+  }
 
-    &:hover {
-      color: $accent-color;
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    right: 2rem;
+    transform: translateY(-50%);
+
+    .menu-icon {
+      border-radius: 4px;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      padding: 8px;
+      background-color: rgb(227, 231, 236);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      &:hover {
+        background-color: rgb(197, 205, 215);
+      }
     }
   }
 
   nav {
+    flex: 2;
     display: flex;
+    justify-content: center;
     align-items: center;
+    gap: 2rem;
 
-    a {
-      color: $primary-color;
-      text-decoration: none;
-      font-size: 1.7rem;
-      margin: 0 2rem;
-      letter-spacing: 1px;
-      font-weight: 600;
-      position: relative;
-      padding-bottom: 5px; // Espace sous le lien pour confort
+    .links {
+      display: flex;
+      gap: 4rem;
 
-      &:hover {
-        color: $accent-color;
+      a {
+        display: flex;
+        align-items: center; // Align items vertically
+        justify-content: center;
+        gap: 1rem;
+        color: #1a1a1a;
+        text-decoration: none;
+        font-size: 1.7rem;
+        letter-spacing: 1px;
+        font-weight: 600;
+        position: relative;
+        padding-bottom: 5px;
+
+        &.active {
+          color: #f05454; // Couleur du texte actif
+
+          .active-icon {
+            color: #f05454; // Couleur de l'icône active
+          }
+        }
+
+        .active-icon {
+          color: inherit; // Use parent color by default
+          transition: color 0.3s ease; // Smooth transition
+        }
+
+        &::after {
+          content: "";
+          display: block;
+          width: 0%; // Initial width of underline
+          height: 2px;
+          background: $accent-color;
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          transition: width 0.3s ease-in-out;
+        }
+
+        &:hover::after,
+        &.active::after {
+          width: 100%; // Underline fully on hover or when active
+        }
+
+        &:hover {
+          text-decoration: none; // Ensure no text decoration on hover
+        }
       }
+    }
 
-      &.active {
-        color: #333;
-      }
-
-      // Soulignement des liens au survol
-      &::after {
-        content: "";
-        display: block;
-        width: 0;
-        height: 2px;
-        background: $accent-color;
-        position: absolute;
-        bottom: -2px; // Descendre légèrement le trait
-        left: 0;
-        transition: width 0.3s ease-in-out;
-      }
-
-      &:hover::after {
-        width: 100%;
-      }
+    .nav.burger {
+      display: none;
     }
   }
 
   .auth-container {
+    flex: 1;
     display: flex;
-    gap: 2rem;
+    justify-content: flex-end;
     align-items: center;
-    justify-content: center;
-    letter-spacing: 1px;
 
-    // Bouton logout (commenté dans le code actuel)
-    button {
-      background: none;
+    .logout-button {
+      background-color: rgb(227, 231, 236);
       color: $primary-color;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
       font-weight: bold;
+      font-size: 14px;
+      line-height: 24px;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
       cursor: pointer;
-      margin-left: 2rem;
+      transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: $accent-color;
-        color: $white-color;
-        border-color: $accent-color;
+        background-color: rgb(197, 205, 215);
       }
     }
 
-    a:nth-last-child(odd) {
+    .login-link {
+      color: $primary-color;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-size: 1.5rem;
+      padding: 8px;
+      letter-spacing: 1px;
+      line-height: 24px;
+      font-weight: 500;
+      padding-bottom: 5px;
+
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+
+    .register-link {
       font-weight: bold;
       font-size: 14px;
       line-height: 24px;
@@ -103,37 +175,228 @@ header {
       border-radius: 4px;
       padding: 8px 24px;
       background-color: rgb(227, 231, 236);
+      text-decoration: none;
 
       &:hover {
         background-color: rgb(197, 205, 215);
-        opacity: 1;
       }
     }
 
-    a:hover {
-      opacity: 0.5;
+    .user-info {
+      display: flex;
+      align-items: center;
+      margin-right: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .avatar {
+      border-radius: 4px;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      padding: 8px;
+      background-color: rgb(227, 231, 236);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      &:hover {
+        background-color: rgb(197, 205, 215);
+      }
+    }
+
+    .user-name {
+      font-size: 1.2rem;
+      color: $primary-color;
+      font-weight: bold;
+      margin-left: 0.5rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .logo-column {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2rem;
+      font-size: 2.5rem;
+      font-weight: bold;
+      font-family: "Josefin Sans", sans-serif;
+      color: $primary-color;
+      text-decoration: none;
+
+      svg {
+        margin-right: 1rem;
+        fill: $accent-color;
+      }
+    }
+
+    .menu-toggle {
+      display: flex;
+      position: absolute;
+      top: 50%;
+      right: 2rem;
+      transform: translateY(-50%);
+      align-items: center;
+      z-index: 1001;
+
+      .menu-icon {
+        border-radius: 4px;
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        padding: 8px;
+        background-color: rgb(227, 231, 236);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        &:hover {
+          background-color: rgb(197, 205, 215);
+        }
+      }
+    }
+
+    nav.screen {
+      display: none;
+    }
+
+    nav.burger {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      position: fixed; // Fixe le menu à l'écran pour plus de visibilité
+      top: 0;
+      left: 0;
+      width: 70vw; // Ajuste la largeur pour ne pas prendre toute la largeur de l'écran
+      height: 100vh; // Prend toute la hauteur de l'écran
+      background-color: #fff;
+      box-shadow: 0 0 1rem rgba(0, 0, 0, 0.822);
+      border-bottom-right-radius: 1rem;
+      padding: 2rem 1rem;
+      text-transform: uppercase;
+      z-index: 1000;
+      overflow-y: auto; // Ajoute une barre de défilement si nécessaire
+      transition: transform 0.3s ease; // Transition pour le menu burger
+
+      .close-button {
+        align-self: flex-end; // Positionne le bouton de fermeture en haut à droite
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .links {
+        display: flex;
+        flex-direction: column;
+        width: 100%; // Prendre toute la largeur disponible
+        gap: 1rem; // Espacement entre les liens
+        border-bottom: 2px solid transparent;
+        justify-content: center;
+        align-items: center;
+
+        a {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          letter-spacing: 1px;
+          font-weight: 600;
+          padding: 1.5rem; // Espacement interne
+          width: 100%; // Les liens prennent toute la largeur disponible
+          color: $primary-color;
+          text-decoration: none;
+          position: relative;
+          border-bottom: 2px solid transparent; // Bordure par défaut
+          transition: color 0.3s ease, border-color 0.3s ease,
+            background-color 0.3s ease; // Transition fluide
+
+          &.active {
+            color: $accent-color;
+            font-weight: bold;
+          }
+
+          &:hover {
+            color: $accent-color;
+            border-bottom: 2px solid $accent-color; // Bordure au survol
+            background-color: rgba(
+              $accent-color,
+              0.1
+            ); // Légère ombre de couleur de survol
+          }
+        }
+      }
+
+      .auth-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem; // Espacement entre les boutons de connexion
+
+        .login-link,
+        .register-link {
+          display: block; // Assure que les boutons occupent toute la largeur disponible
+          width: 100%;
+          text-align: center;
+          padding: 1rem;
+          font-size: 1.5rem;
+          border-radius: 5px;
+          text-decoration: none;
+          background-color: $primary-color;
+          color: $white-color;
+          font-weight: bold;
+          margin-top: 1rem; // Espacement au-dessus de chaque bouton
+          transition: background-color 0.3s ease, color 0.3s ease; // Transition fluide
+
+          &:hover {
+            opacity: 1;
+            background-color: $accent-color; // Changement de couleur de fond au survol
+            color: $primary-color; // Changement de couleur de texte au survol
+          }
+        }
+      }
     }
   }
 }
 
-// Styles pour les éléments d'avatar (si besoin)
-.avatar-container {
-  display: flex;
-  align-items: center;
-  margin-left: 2rem;
+.loader {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border: 5px solid $accent-color;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  z-index: 1000;
+}
 
-  .avatar {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    margin-right: 0.5rem;
-    border: 2px solid $primary-color;
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
   }
-
-  .user-name {
-    font-size: 1rem;
-    color: $primary-color;
-    font-weight: bold;
+  100% {
+    transform: rotate(360deg);
   }
 }

@@ -1,0 +1,184 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-form {
+  display: flex;
+  font-size: 1.5rem;
+  font-family: "Josefin Sans";
+  flex-direction: column;
+  gap: 2rem;
+  background-color: $white-color;
+  padding: 3rem;
+  border-radius: 8px;
+  width: 70%;
+  max-width: 800px;
+  opacity: 0;
+  position: absolute; // Changer à relative pour le positionnement de la croix
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+
+  &.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 2rem; // Ajuste la taille si nécessaire
+    color: black;
+    cursor: pointer;
+    transition: color 0.3s;
+
+    display: flex; // Utilise flexbox pour centrer
+    justify-content: center;
+    align-items: center;
+    width: 40px; // Largeur fixe pour le bouton
+    height: 40px; // Hauteur fixe pour le bouton
+    &:hover {
+      color: $accent-color; // Couleur au survol
+    }
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    background-color: $white-color;
+    padding: 20px;
+    gap: 0.5rem;
+    transition: border-color 0.3s ease;
+
+    label {
+      display: flex;
+      text-align: start;
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: $primary-color;
+      margin-bottom: 15px;
+    }
+
+    select {
+      width: 50%;
+      padding: 8px;
+      border: transparent;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+      background-color: $background-color;
+      box-sizing: border-box;
+      font-size: 1.5rem;
+      color: $primary-color; // Définis cette couleur dans tes variables si elle n'existe pas encore
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:focus {
+        border-color: $primary-color;
+        box-shadow: 0px 0px 4px rgba($primary-color, 0.3);
+        outline: none;
+      }
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 1.6rem;
+      border: transparent;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+      background-color: $background-color;
+      transition: outline 0.3s ease;
+
+      &:focus {
+        outline: 1px solid $accent-color;
+        border: transparent;
+      }
+    }
+  }
+
+  .submit-button {
+    color: $white-color;
+    background-color: $primary-color;
+    font-weight: 600;
+    padding: 15px 20px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease,
+      box-shadow 0.3s ease;
+
+    align-self: center;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+      background-color: $accent-color;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 5px $accent-color;
+    }
+
+    &:disabled {
+      background-color: lighten($primary-color, 40%);
+      cursor: not-allowed;
+    }
+  }
+  .modal-buttons {
+    display: flex;
+    justify-content: start;
+    gap: 2rem;
+
+    .delete-button {
+      background-color: #e63946; // Rouge pour la suppression
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      font-family: "Josefin Sans";
+      border-radius: 4px;
+      padding: 1rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #d62839; // Couleur plus sombre au survol
+      }
+    }
+
+    .btn-cancel {
+      background-color: #ccc; // Couleur neutre pour annuler
+      color: #333;
+      border: none;
+      font-size: 1.5rem;
+      font-family: "Josefin Sans";
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #bbb; // Couleur plus sombre au survol
+      }
+    }
+  }
+}

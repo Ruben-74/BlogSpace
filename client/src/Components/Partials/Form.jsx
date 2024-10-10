@@ -1,53 +1,72 @@
 import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+import { updateField } from "../../store/slicesRedux/user";
 
-function Form(props) {
+function Form({ submitHandler, isRegister, children }) {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+
   return (
-    <>
-      {props.msg && <p>{props.msg}</p>}
+    <form onSubmit={submitHandler}>
+      {user.msg && typeof user.msg === "string" && (
+        <p className="error user-msg">{user.msg}</p>
+      )}
 
-      <form onSubmit={props.submitHandler}>
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          name="username"
-          id="username"
-          value={props.user.username}
-          onChange={(e) =>
-            props.setUser({
-              ...props.user,
-              username: e.target.value,
-            })
-          }
-          required
-        />
+      {isRegister && (
+        <>
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            value={user.username || ""}
+            onChange={(e) =>
+              dispatch(updateField({ ...user, username: e.target.value }))
+            }
+            required
+            autoComplete="username"
+            tabIndex="1"
+          />
+        </>
+      )}
 
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          name="password"
-          id="password"
-          value={props.user.password}
-          onChange={(e) =>
-            props.setUser({
-              ...props.user,
-              password: e.target.value,
-            })
-          }
-          required
-        />
+      <label htmlFor="email"> Email</label>
+      <input
+        type="email"
+        name="email"
+        id="email"
+        value={user.email || ""}
+        onChange={(e) =>
+          dispatch(updateField({ ...user, email: e.target.value }))
+        }
+        required
+        autoComplete="email"
+        tabIndex="1"
+      />
 
-        {props.children}
-      </form>
-    </>
+      <label htmlFor="password">Password</label>
+      <input
+        type="password"
+        name="password"
+        id="password"
+        value={user.password || ""}
+        onChange={(e) =>
+          dispatch(updateField({ ...user, password: e.target.value }))
+        }
+        required
+        autoComplete="password"
+        tabIndex="2"
+      />
+
+      {children}
+    </form>
   );
 }
 
 Form.propTypes = {
   submitHandler: PropTypes.func.isRequired,
-  setUser: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
+  isRegister: PropTypes.bool.isRequired,
   children: PropTypes.node,
-  msg: PropTypes.string,
 };
 
 export default Form;
