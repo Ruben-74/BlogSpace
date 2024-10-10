@@ -1,4 +1,4 @@
-import Post from "../../model/Post.js";
+import Post from "../model/Post.js";
 
 const home_view = async (req, res) => {
   try {

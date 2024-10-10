@@ -1,26 +1,20 @@
 import Router from "express";
 
 import {
-  create,
+  findAllFromID,
   getAll,
-  getById,
-  remove,
+  create,
   update,
-} from "../controller/category.js";
+  remove,
+} from "../controller/comment.js";
 
 const router = Router();
 
-//Vues
 router.get("/all", getAll);
-router.get("/:id", getById);
+router.get("/comment/:id", findAllFromID);
 
-// CREATE (POST)
 router.post("/create", create);
-
-// // UPDATE (PATCH)
 router.patch("/update/:id", update);
-
-// // DELETE (DELETE)
-router.delete("/remove/:id", remove);
+router.delete("/delete/:id", remove);
 
 export default router;

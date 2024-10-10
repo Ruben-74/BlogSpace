@@ -1,19 +1,81 @@
-// import bcrypt from "bcrypt";
+import Auth from "../model/Auth.js";
+import bcrypt from "bcrypt";
 
-// import pool from "../config/db.js";
+const SALT = 10;
 
-// LOGIN
-const login_view = (req, res) => {};
+const register = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    const [[user]] = await Auth.findOneByEmail(email);
 
-// REGISTER
-const register_view = (req, res) => {};
+    // Check if user already exists
+    if (user) {
+      return res.status(400).json({ msg: "User already exists" });
+    }
 
-// LOGOUT
-const logout = (req, res) => {};
+    // Hash the password
+    const hash = await bcrypt.hash(password, SALT);
+    const [response] = await Auth.create({ username, email, password: hash });
 
-//POST
-const register = async (req, res) => {};
+    // Check if the user was created successfully
+    if (response.affectedRows === 1) {
+      return res.status(201).json({ msg: "User created" });
+    } else {
+      return res.status(500).json({ msg: "User not created" });
+    }
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
+};
 
-const login = async (req, res) => {};
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const [[user]] = await Auth.findOneByEmail(email);
 
-export { register_view, login_view, register, login, logout };
+    if (!user) {
+      res.status(400).json({ msg: "User not found" });
+    }
+    if (user) {
+      const match = await bcrypt.compare(password, user.password);
+      if (match) {
+        const [[userByID]] = await Auth.findUserInfoById(user.id);
+        console.log("dddd", userByID);
+        req.session.user = { id: user.id, ...userByID };
+        res
+          .status(200)
+          .json({ msg: "User logged in", isLogged: true, user: userByID });
+      } else {
+        res.status(400).json({ msg: "Invalid credentials" });
+      }
+    }
+  } catch (err) {
+    res.status(500).json({ msg: err });
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    // destruction de la session en BDD (store sql)
+    req.session.destroy();
+    // suppression du cookie de session
+    res.clearCookie("connect.sid");
+    res.status(200).json({ msg: "User logged out", isLogged: false });
+  } catch (err) {
+    res.status(500).json({ msg: err });
+  }
+};
+
+const check_auth = async (req, res) => {
+  const { user } = req.session;
+
+  if (user) {
+    console.log("check-auth", user);
+    // si user existe
+    res.json({ isLogged: true, user });
+  } else {
+    res.status(401).json({ isLogged: false });
+  }
+};
+
+export { register, login, logout, check_auth };
