@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Initialisation des données reçues du back
 const initialState = {
-  username: "", // Add username
+  username: "",
   email: "",
   password: "",
   avatar: "user.png",
@@ -18,38 +17,32 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     login(state, action) {
-      console.log(action.payload); // Vérifiez la charge utile de l'action
-      state.username = action.payload.user.username;
-      state.email = action.payload.user.email; // Récupération de l'email
-      state.password = ""; // Réinitialisation du mot de passe
-      state.isLogged = action.payload.isLogged; // État de connexion
-      state.avatar = action.payload.user.avatar || "user.png"; // Récupération de l'avatar
-      state.role = action.payload.user.role || "user"; // Récupération du rôle
-      state.userId = action.payload.user.id || null; // Récupération de userId (assurez-vous que le bon chemin est utilisé)
-      state.authError = null; // Réinitialisation des erreurs
+      console.log("Payload de connexion :", action.payload);
+      state.username = action.payload.user.username; // Ensure this path is correct
+      state.email = action.payload.user.email;
+      state.isLogged = action.payload.isLogged;
+      state.avatar = action.payload.user.avatar || "user.png";
+      state.role = action.payload.user.role || "user";
+      state.userId = action.payload.user.id || null; // Ensure this is correct
+      state.authError = null;
     },
     loginFailed(state, action) {
       state.authError = action.payload.error;
+      state.isLogged = false; // Mettre à false si la connexion échoue
     },
     logout(state) {
       // Réinitialisation de l'état lors de la déconnexion
-      state.username = "";
-      state.email = "";
-      state.password = "";
-      state.avatar = "user.png";
-      state.role = "user";
-      state.isLogged = false;
-      state.userId = null; // Réinitialiser userId
+      Object.assign(state, initialState); // Réinitialiser tout l'état
     },
     setMsg(state, action) {
-      state.msg = action.payload; // Définition du message
+      state.msg = action.payload;
     },
     setAvatar(state, action) {
-      state.avatar = action.payload; // Définition de l'avatar
+      state.avatar = action.payload;
     },
     updateField(state, action) {
-      state.email = action.payload.email; // Mise à jour de l'email
-      state.password = action.payload.password; // Mise à jour du mot de passe
+      state.email = action.payload.email;
+      state.password = action.payload.password;
       state.username = action.payload.username || state.username;
     },
   },

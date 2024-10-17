@@ -17,12 +17,12 @@
 .post-card {
   display: flex;
   align-items: flex-start;
+  gap: 2rem;
+  max-height: 400px;
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 2rem;
-  gap: 2rem;
   overflow: hidden;
-  margin-bottom: 4rem;
   transition: all 0.3s ease;
   border: transparent;
   transform-origin: center; // Assure que la transformation se fait à partir du centre
@@ -35,10 +35,12 @@
 
 .post-image {
   flex: 1;
+  overflow: hidden; // Pour cacher les débordements
   img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+    width: 100%; // Take full width of the container
+    height: auto; // Ensure the image covers the height of the container
+    object-fit: cover; // Maintain aspect ratio while covering the area
+    object-position: center; //
   }
 }
 

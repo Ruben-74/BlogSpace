@@ -21,6 +21,13 @@ $white-color: #fff;
     background-color: rgb(197, 205, 215);
   }
 
+  .success-message {
+    color: green; /* Couleur verte pour le succès */
+    font-family: "Josefin Sans";
+    margin: 10px 0; /* Espacement */
+    font-weight: bold; /* Mettre en gras */
+  }
+
   .info-line {
     display: flex;
     align-items: center;

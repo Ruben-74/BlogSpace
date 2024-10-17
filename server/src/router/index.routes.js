@@ -5,6 +5,7 @@ import avatar_routes from "./avatar.routes.js";
 import user_routes from "./user.routes.js";
 import comment_routes from "./comment.routes.js";
 import category_routes from "./category.routes.js";
+import contact_routes from "./contact.routes.js";
 
 const router = Router();
 
@@ -25,6 +26,9 @@ router.use("/comment", comment_routes);
 
 //category
 router.use("/category", category_routes);
+
+//contact
+router.use("/contact", contact_routes);
 
 // GET NOT FOUND (tjr a la fin)
 router.get("*", (req, res) => {

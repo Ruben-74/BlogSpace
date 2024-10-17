@@ -35,12 +35,6 @@ $white-color: #fff;
       max-width: 100%;
       height: auto;
       border-radius: 12px; // Coins arrondis plus marqués
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.8); // Ombre plus douce
-      transition: transform 0.3s ease; // Effet de zoom léger
-    }
-
-    img:hover {
-      transform: scale(1.02); // Zoom léger au survol
     }
   }
 
@@ -82,6 +76,7 @@ $white-color: #fff;
   // Style pour les catégories du post
   .post-categories {
     display: flex;
+    justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px;
 
@@ -89,9 +84,10 @@ $white-color: #fff;
       display: inline-block;
       background-color: $accent-color;
       color: $white-color;
+      font-family: "Josefin Sans";
       padding: 8px 20px; // Espacement intérieur plus généreux
       border-radius: 4px; // Coins arrondis pour un look plus moderne
-      font-size: 1.4rem;
+      font-size: 1.6rem;
       font-weight: 600;
       text-align: center;
       white-space: nowrap;
@@ -106,20 +102,102 @@ $white-color: #fff;
     }
   }
 
-  // Style pour les liens
-  a {
-    color: $link-color;
-    text-decoration: none;
+  form {
+    display: flex;
+    flex-direction: column;
+    background-color: $white-color;
+    border-radius: 8px;
+    width: 100%;
+    gap: 0.5rem;
+    margin: 1rem auto;
+    border: transparent;
+    transition: border-color 0.3s ease;
     font-weight: 600;
-    transition: color 0.3s ease; // Transition fluide pour l'effet de survol
+    font-family: "Josefin Sans";
+
+    label {
+      display: block;
+      text-align: start;
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: $primary-color;
+      margin-bottom: 15px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 1.6rem;
+      border: transparent;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+      background-color: $background-color;
+      transition: outline 0.3s ease;
+
+      &:focus {
+        outline: 1px solid $accent-color;
+        border: transparent;
+      }
+    }
+    button {
+      display: block;
+      align-self: start;
+      color: $primary-color; // Couleur du texte
+      background-color: transparent; // Fond transparent
+      font-weight: 600;
+      border: 1px solid #1a1a1a; // Pas de bordure
+      border-radius: 5px; // Coins arrondis
+      cursor: pointer;
+      font-size: 1.5rem;
+      padding: 10px;
+      font-family: "Josefin Sans";
+      transition: color 0.5s ease; // Transition pour la couleur au survol
+
+      // Effet au survol
+      &:hover {
+        background-color: #1a1a1a; // Change la couleur de fond au survol
+        color: $white-color; // Change la couleur du texte au survol
+      }
+
+      &:disabled {
+        color: gray; // Couleur pour le bouton désactivé
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    margin-right: 1.5rem;
+    position: relative;
+    gap: 1rem;
+    z-index: 1;
+  }
+
+  .avatar {
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    background-color: rgb(227, 231, 236);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
     &:hover {
-      text-decoration: underline;
-      color: darken(
-        $link-color,
-        10%
-      ); // Assombrissement au survol pour plus de contraste
+      background-color: rgb(197, 205, 215);
     }
+  }
+
+  .user-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-left: 0.5rem;
   }
 
   // Style pour l'indicateur de chargement

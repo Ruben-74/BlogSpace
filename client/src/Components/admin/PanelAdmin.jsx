@@ -30,27 +30,27 @@ function PanelAdmin() {
   return (
     <>
       <section className="container">
-        <h2>My dashboard</h2>
+        <h1>My dashboard</h1>
         <section>
-          <h3>Statistiques</h3>
+          <h2>Statistiques</h2>
           <ul className="stats-list">
             <li className="stats-item">
-              <span>Nombre d&apos;utilisateurs : {stats.totalUsers}</span>
               <CircularProgressBar percentage={Math.round(userPercentage)} />
+              <span>Nombre d&apos;utilisateurs : {stats.totalUsers}</span>
             </li>
             <li className="stats-item">
-              <span>Nombre d&apos;articles : {stats.totalArticles}</span>
               <CircularProgressBar percentage={Math.round(articlePercentage)} />
+              <span>Nombre d&apos;articles : {stats.totalArticles}</span>
             </li>
             <li className="stats-item">
-              <span>Nombre de catégories : {stats.totalCategories}</span>
               <CircularProgressBar
                 percentage={Math.round(categoryPercentage)}
               />
+              <span>Nombre de catégories : {stats.totalCategories}</span>
             </li>
             <li className="stats-item">
-              <span>Nombre de commentaires : {stats.totalComments}</span>
               <CircularProgressBar percentage={Math.round(commentPercentage)} />
+              <span>Nombre de commentaires : {stats.totalComments}</span>
             </li>
           </ul>
         </section>

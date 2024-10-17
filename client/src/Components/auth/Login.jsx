@@ -44,7 +44,7 @@ function Login() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        console.log("Login response data:", data);
         dispatch(login(data)); // Dispatch la connexion avec les infos de l'utilisateur
         navigate("/"); // Rediriger vers la page d'accueil
       } else {

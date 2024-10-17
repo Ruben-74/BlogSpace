@@ -114,6 +114,12 @@ function Header() {
             >
               Utilisateurs
             </NavLink>
+            <NavLink
+              to="/contact"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Messagerie
+            </NavLink>
           </div>
 
           <div className="auth-container">

@@ -30,6 +30,7 @@ function UserRouter() {
           path="dashboard"
           element={<ProtectedRoute element={Dashboard} />}
         />
+
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfUse />} />
         <Route path="contact" element={<Contact />} />

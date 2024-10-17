@@ -35,6 +35,36 @@
     transform: translate(-50%, -50%) scale(1);
   }
 
+  .message-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .message-details-table th,
+  .message-details-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .message-details-table th {
+    background-color: #f4f4f4;
+  }
+
+  .reply-button {
+    background-color: #4caf50; /* Couleur verte */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .reply-button:hover {
+    background-color: #45a049; /* Couleur verte plus foncée au survol */
+  }
+
   .close-button {
     position: absolute;
     top: 1rem;
@@ -59,8 +89,8 @@
   form {
     display: flex;
     flex-direction: column;
+    font-family: "Josefin Sans";
     background-color: $white-color;
-    padding: 20px;
     gap: 0.5rem;
     transition: border-color 0.3s ease;
 
@@ -71,6 +101,30 @@
       font-weight: 500;
       color: $primary-color;
       margin-bottom: 15px;
+    }
+
+    .reply-button {
+      background-color: #f05454;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 1.5rem;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #1a1a1a;
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
     }
 
     select {

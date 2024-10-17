@@ -12,15 +12,17 @@ const home_view = async (req, res) => {
 
 const post_view = async (req, res) => {
   try {
-    // Requête SQL pour récupérer le post correspondant
-    const data = await Post.getOneById(req.params.id);
-    res.json(data);
+    const postData = await Post.getOneById(req.params.id);
 
     // Vérifier si le post existe
-    if (data.length === 0) {
+    if (!postData) {
       return res.status(404).json({ msg: "Post not found" }); // Réponse 404 si le post n'existe pas
     }
+
+    // Si le post existe, envoyer les données
+    res.status(200).json(postData);
   } catch (err) {
+    console.error("Erreur dans post_view:", err.message);
     res.status(500).json({ error: err.message });
   }
 };

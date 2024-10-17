@@ -10,7 +10,7 @@ function CircularProgressBar({ percentage }) {
     datasets: [
       {
         data: [percentage, 100 - percentage], // Pourcentage d'utilisateurs et reste
-        backgroundColor: ["#4caf50", "#e0e0e0"], // Couleurs: vert pour l'usage, gris pour le reste
+        backgroundColor: ["#f05454", "#e0e0e0"], // Couleurs: vert pour l'usage, gris pour le reste
         borderWidth: 0,
       },
     ],

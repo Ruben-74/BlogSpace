@@ -29,24 +29,30 @@ const PostProvider = ({ children }) => {
         throw new Error(errorMessage || "Erreur lors de la création du post");
       }
 
-      const { postId } = await postResponse.json();
-      // Vous pourriez vouloir récupérer l'image ou d'autres détails ici
-      setPosts((prevPosts) => [...prevPosts, { ...postData, id: postId }]);
+      const result = await postResponse.json();
+      setPosts((prevPosts) => [
+        ...prevPosts,
+        { ...postData, id: result.postId },
+      ]);
+
+      // Retournez la réponse pour la gestion dans le composant
+      return postResponse; // Renvoie la réponse de l'API
     } catch (error) {
       console.error("Erreur lors de la création du post:", error.message);
+      throw error; // Relancer l'erreur pour qu'elle soit gérée dans le composant
     }
   };
 
   // Fonction pour mettre à jour un post
   const updatePost = async (postData) => {
+    const postId = postData.get("id");
     try {
       const response = await fetch(
-        `http://localhost:9000/api/v1/post/update/${postData.id}`,
+        `http://localhost:9000/api/v1/post/update/${postId}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify(postData),
+          body: postData,
         }
       );
 
@@ -58,6 +64,7 @@ const PostProvider = ({ children }) => {
       }
 
       const updatedPost = await response.json();
+      console.log(updatedPost);
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.id === updatedPost.id ? updatedPost : post

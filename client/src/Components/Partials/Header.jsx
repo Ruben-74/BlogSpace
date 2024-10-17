@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaSpaceShuttle, FaTimes } from "react-icons/fa";
+import { FaPowerOff, FaSpaceShuttle, FaTimes } from "react-icons/fa";
 import { FaHouse } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/slicesRedux/user";
@@ -28,38 +28,33 @@ function Header() {
     };
   }, []);
 
-  function onClickLogout() {
-    async function fetchLogout() {
-      const response = await fetch("http://localhost:9000/api/v1/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (response.status === 200) {
-        const data = await response.json();
-        dispatch(logout(data.isLogged));
-        dispatch(toggleMenu());
-        navigate("/");
-      }
+  async function onClickLogout() {
+    const response = await fetch("http://localhost:9000/api/v1/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    if (response.status === 200) {
+      const data = await response.json();
+      dispatch(logout(data.isLogged));
+      dispatch(toggleMenu());
+      navigate("/");
     }
-    fetchLogout();
   }
 
   return (
     <header>
-      {type === "mobile" && (
+      <div className="header-content">
         <div className="logo-title">
           <FaSpaceShuttle size={50} />
           BlogSpace
         </div>
-      )}
-      <div className="header-content">
         <button
           className="menu-toggle"
           onClick={() => dispatch(toggleMenu())}
           aria-label="Toggle menu"
         >
           <div className="menu-icon">
-            {type === "mobile" && menu.isOpen ? (
+            {menu.isOpen ? (
               <FaTimes size={20} />
             ) : (
               <img src={`/icons/${user.avatar}`} alt="menu" />
@@ -67,25 +62,13 @@ function Header() {
           </div>
         </button>
 
-        <nav
-          className={`nav ${
-            type === "mobile" && menu.isOpen ? "burger" : "screen"
-          }`}
-        >
-          <div className={type === "mobile" ? "logo-column" : "logo-title"}>
-            <FaSpaceShuttle size={50} />
-            BlogSpace
-          </div>
-
+        <nav className={`nav ${menu.isOpen ? "burger" : "screen"}`}>
           <div className="links">
             <NavLink
               to="/"
               className={({ isActive }) => (isActive ? "active" : "")}
             >
-              <FaHouse
-                size={24}
-                className={({ isActive }) => (isActive ? "active-icon" : "")}
-              />
+              <FaHouse size={24} />
             </NavLink>
             <NavLink
               to="/automobile"
@@ -120,9 +103,9 @@ function Header() {
                 <button
                   className="logout-button"
                   onClick={onClickLogout}
-                  aria-label="Logout"
+                  aria-label="Déconnexion"
                 >
-                  Déconnexion
+                  <FaPowerOff size={20} />
                 </button>
               </>
             ) : (

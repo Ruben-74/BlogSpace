@@ -6,6 +6,7 @@ import Comment from "../Components/admin/Comment/Comment";
 import Post from "../Components/admin/Post/Post";
 import PanelAdmin from "../Components/admin/PanelAdmin";
 import Footer from "../Components/Partials/Footer";
+import Contact from "../Components/admin/Contact/Contact";
 
 function AdminRouter() {
   return (
@@ -16,8 +17,9 @@ function AdminRouter() {
           {/* ici chaque route correspondant au click sur un link sera monté dans le Composant Outlet (cf. Composant Dashboard) */}
           <Route path="/user" element={<User />} />
           <Route path="/category" element={<Category />} />
-          <Route path="/comment" element={<Comment />} />
           <Route path="/post" element={<Post />} />
+          <Route path="/comment" element={<Comment />} />
+          <Route path="/contact" element={<Contact />} />
         </Route>
 
         <Route path="*" element={<h1>404</h1>} />

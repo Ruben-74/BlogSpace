@@ -16,7 +16,7 @@ class Auth {
 
   static async findUserInfoById(id) {
     const SELECT =
-      "SELECT username, role, label AS avatar FROM user LEFT JOIN avatar ON user.avatar_id = avatar.id WHERE user.id = ?";
+      "SELECT * , label AS avatar FROM user LEFT JOIN avatar ON user.avatar_id = avatar.id WHERE user.id = ?";
     return await pool.execute(SELECT, [id]);
   }
 }

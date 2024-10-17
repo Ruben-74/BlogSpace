@@ -9,24 +9,206 @@ header {
 
   .header-content {
     display: flex;
+    flex-grow: 2;
     align-items: center;
     justify-content: center;
     width: 100%;
-  }
 
-  .logo-title {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    font-size: 2.5rem;
-    font-weight: bold;
-    font-family: "Josefin Sans", sans-serif;
-    color: $primary-color;
-    text-decoration: none;
+    .logo-title {
+      flex-grow: 2;
+      display: flex;
+      align-items: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      font-family: "Josefin Sans", sans-serif;
+      color: $primary-color;
+      text-decoration: none;
 
-    svg {
-      margin-right: 1rem;
-      fill: $accent-color;
+      svg {
+        margin-right: 1rem;
+        fill: $accent-color;
+      }
+    }
+
+    nav {
+      display: flex;
+      flex-grow: 2;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+
+      .links {
+        display: flex;
+        gap: 4rem;
+
+        a {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
+          color: #1a1a1a;
+          text-decoration: none;
+          font-size: 1.7rem;
+          letter-spacing: 1px;
+          font-weight: 600;
+          position: relative;
+          padding-bottom: 5px;
+          transition: color 0.3s ease;
+
+          &.active {
+            color: #f05454;
+
+            .active-icon {
+              color: #f05454;
+            }
+          }
+
+          .active-icon {
+            color: inherit;
+            transition: color 0.3s ease;
+          }
+
+          &::after {
+            content: "";
+            display: block;
+            width: 0%;
+            height: 2px;
+            background: $accent-color;
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            transition: width 0.3s ease-in-out;
+          }
+
+          &:hover::after,
+          &.active::after {
+            width: 100%;
+          }
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+
+      .nav.burger {
+        display: none;
+      }
+    }
+
+    .auth-container {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      .create-icon {
+        border-radius: 4px;
+        margin-right: 1.5rem;
+        width: 40px;
+        height: 40px;
+        padding: 8px;
+        background-color: $primary-color;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logout-button {
+        background-color: rgb(227, 231, 236);
+        color: $primary-color;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 24px;
+        border: none;
+        border-radius: 4px;
+        padding: 8px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+
+        &:hover {
+          background-color: rgb(197, 205, 215);
+          color: #f05454;
+        }
+
+        &:focus {
+          outline: 2px solid $primary-color;
+          outline-offset: 2px;
+        }
+
+        &:disabled {
+          background-color: rgb(200, 200, 200);
+          cursor: not-allowed;
+        }
+      }
+
+      .login-link {
+        color: $primary-color;
+        text-decoration: none;
+        margin: 0 1rem;
+        font-size: 1.5rem;
+        padding: 8px;
+        letter-spacing: 1px;
+        line-height: 24px;
+        font-weight: 500;
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+
+      .register-link {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 24px;
+        color: rgb(16, 14, 14);
+        border-radius: 4px;
+        padding: 8px 24px;
+        background-color: rgb(227, 231, 236);
+        text-decoration: none;
+
+        &:hover {
+          background-color: rgb(197, 205, 215);
+        }
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        margin-right: 1.5rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .avatar {
+        border-radius: 4px;
+        width: 40px;
+        height: 40px;
+        padding: 8px;
+        background-color: rgb(227, 231, 236);
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        &:hover {
+          background-color: rgb(197, 205, 215);
+        }
+      }
+
+      .user-name {
+        font-size: 1.2rem;
+        color: $primary-color;
+        font-weight: bold;
+        margin-left: 0.5rem;
+      }
     }
   }
 
@@ -44,160 +226,13 @@ header {
       border-radius: 4px;
       width: 40px;
       height: 40px;
-      object-fit: cover;
       padding: 8px;
       background-color: rgb(227, 231, 236);
       display: flex;
       align-items: center;
       justify-content: center;
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      &:hover {
-        background-color: rgb(197, 205, 215);
-      }
-    }
-  }
-
-  nav {
-    flex: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-
-    .links {
-      display: flex;
-      gap: 4rem;
-
-      a {
-        display: flex;
-        align-items: center; // Align items vertically
-        justify-content: center;
-        gap: 1rem;
-        color: #1a1a1a;
-        text-decoration: none;
-        font-size: 1.7rem;
-        letter-spacing: 1px;
-        font-weight: 600;
-        position: relative;
-        padding-bottom: 5px;
-
-        &.active {
-          color: #f05454; // Couleur du texte actif
-
-          .active-icon {
-            color: #f05454; // Couleur de l'icône active
-          }
-        }
-
-        .active-icon {
-          color: inherit; // Use parent color by default
-          transition: color 0.3s ease; // Smooth transition
-        }
-
-        &::after {
-          content: "";
-          display: block;
-          width: 0%; // Initial width of underline
-          height: 2px;
-          background: $accent-color;
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          transition: width 0.3s ease-in-out;
-        }
-
-        &:hover::after,
-        &.active::after {
-          width: 100%; // Underline fully on hover or when active
-        }
-
-        &:hover {
-          text-decoration: none; // Ensure no text decoration on hover
-        }
-      }
-    }
-
-    .nav.burger {
-      display: none;
-    }
-  }
-
-  .auth-container {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-
-    .logout-button {
-      background-color: rgb(227, 231, 236);
-      color: $primary-color;
-      font-weight: bold;
-      font-size: 14px;
-      line-height: 24px;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 16px;
-      cursor: pointer;
       transition: background-color 0.3s ease;
 
-      &:hover {
-        background-color: rgb(197, 205, 215);
-      }
-    }
-
-    .login-link {
-      color: $primary-color;
-      text-decoration: none;
-      margin: 0 1rem;
-      font-size: 1.5rem;
-      padding: 8px;
-      letter-spacing: 1px;
-      line-height: 24px;
-      font-weight: 500;
-      padding-bottom: 5px;
-
-      &:hover {
-        opacity: 0.5;
-      }
-    }
-
-    .register-link {
-      font-weight: bold;
-      font-size: 14px;
-      line-height: 24px;
-      color: rgb(16, 14, 14);
-      border-radius: 4px;
-      padding: 8px 24px;
-      background-color: rgb(227, 231, 236);
-      text-decoration: none;
-
-      &:hover {
-        background-color: rgb(197, 205, 215);
-      }
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      margin-right: 1.5rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .avatar {
-      border-radius: 4px;
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-      padding: 8px;
-      background-color: rgb(227, 231, 236);
-
       img {
         width: 100%;
         height: 100%;
@@ -207,36 +242,10 @@ header {
       &:hover {
         background-color: rgb(197, 205, 215);
       }
-    }
-
-    .user-name {
-      font-size: 1.2rem;
-      color: $primary-color;
-      font-weight: bold;
-      margin-left: 0.5rem;
     }
   }
 
   @media (max-width: 600px) {
-    .logo-column {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      justify-content: center;
-      gap: 2rem;
-      font-size: 2.5rem;
-      font-weight: bold;
-      font-family: "Josefin Sans", sans-serif;
-      color: $primary-color;
-      text-decoration: none;
-
-      svg {
-        margin-right: 1rem;
-        fill: $accent-color;
-      }
-    }
-
     .menu-toggle {
       display: flex;
       position: absolute;
@@ -245,28 +254,6 @@ header {
       transform: translateY(-50%);
       align-items: center;
       z-index: 1001;
-
-      .menu-icon {
-        border-radius: 4px;
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        padding: 8px;
-        background-color: rgb(227, 231, 236);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        &:hover {
-          background-color: rgb(197, 205, 215);
-        }
-      }
     }
 
     nav.screen {
@@ -278,38 +265,32 @@ header {
       flex-direction: column;
       align-items: center;
       gap: 1.5rem;
-      position: fixed; // Fixe le menu à l'écran pour plus de visibilité
+      position: fixed;
       top: 0;
       left: 0;
-      width: 70vw; // Ajuste la largeur pour ne pas prendre toute la largeur de l'écran
-      height: 100vh; // Prend toute la hauteur de l'écran
+      width: 70vw;
+      height: 100vh;
       background-color: #fff;
       box-shadow: 0 0 1rem rgba(0, 0, 0, 0.822);
       border-bottom-right-radius: 1rem;
       padding: 2rem 1rem;
-      text-transform: uppercase;
       z-index: 1000;
-      overflow-y: auto; // Ajoute une barre de défilement si nécessaire
-      transition: transform 0.3s ease; // Transition pour le menu burger
+      overflow-y: auto;
 
       .close-button {
-        align-self: flex-end; // Positionne le bouton de fermeture en haut à droite
+        align-self: flex-end;
         background: none;
         border: none;
         cursor: pointer;
         font-size: 2rem;
         margin-bottom: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
 
       .links {
         display: flex;
         flex-direction: column;
-        width: 100%; // Prendre toute la largeur disponible
-        gap: 1rem; // Espacement entre les liens
-        border-bottom: 2px solid transparent;
+        width: 100%;
+        gap: 1rem;
         justify-content: center;
         align-items: center;
 
@@ -319,14 +300,11 @@ header {
           align-items: center;
           letter-spacing: 1px;
           font-weight: 600;
-          padding: 1.5rem; // Espacement interne
-          width: 100%; // Les liens prennent toute la largeur disponible
+          padding: 1.5rem;
+          width: 100%;
           color: $primary-color;
           text-decoration: none;
           position: relative;
-          border-bottom: 2px solid transparent; // Bordure par défaut
-          transition: color 0.3s ease, border-color 0.3s ease,
-            background-color 0.3s ease; // Transition fluide
 
           &.active {
             color: $accent-color;
@@ -335,11 +313,7 @@ header {
 
           &:hover {
             color: $accent-color;
-            border-bottom: 2px solid $accent-color; // Bordure au survol
-            background-color: rgba(
-              $accent-color,
-              0.1
-            ); // Légère ombre de couleur de survol
+            background-color: rgba($accent-color, 0.1);
           }
         }
       }
@@ -348,11 +322,10 @@ header {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1rem; // Espacement entre les boutons de connexion
+        gap: 1rem;
 
         .login-link,
         .register-link {
-          display: block; // Assure que les boutons occupent toute la largeur disponible
           width: 100%;
           text-align: center;
           padding: 1rem;
@@ -362,13 +335,11 @@ header {
           background-color: $primary-color;
           color: $white-color;
           font-weight: bold;
-          margin-top: 1rem; // Espacement au-dessus de chaque bouton
-          transition: background-color 0.3s ease, color 0.3s ease; // Transition fluide
+          margin-top: 1rem;
+          transition: background-color 0.3s ease;
 
           &:hover {
-            opacity: 1;
-            background-color: $accent-color; // Changement de couleur de fond au survol
-            color: $primary-color; // Changement de couleur de texte au survol
+            background-color: $accent-color;
           }
         }
       }

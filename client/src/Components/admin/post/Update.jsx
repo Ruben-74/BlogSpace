@@ -1,165 +1,213 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { FaTimes, FaUpload } from "react-icons/fa";
 import { PostContext } from "../../../store/post/PostContext";
-import { FaArrowLeft, FaUpload } from "react-icons/fa";
 
-function Update() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+function Update({ setIsModalToggle, fetchPost, currentPost }) {
   const state = useContext(PostContext);
+
   const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  const [categoryId, setCategoryId] = useState("");
+  const [userId, setUserId] = useState("");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [userId, setUserId] = useState("");
-  const [image, setImage] = useState(null); // Stocke l'image en base64
+  const [image, setImage] = useState(null);
+  const [error, setError] = useState("");
 
-  // Récupérer les catégories depuis le serveur
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:9000/api/v1/category/all");
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des catégories");
-      }
-      const [data] = await response.json();
+      const response = await fetch(
+        "http://localhost:9000/api/v1/category/list"
+      );
+      const data = await response.json();
       setCategories(data);
     } catch (error) {
-      console.error("Erreur:", error);
+      console.error("Erreur lors de la récupération des catégories :", error);
     }
   };
 
-  // Récupérer les détails du post à éditer
-  const updatePost = async () => {
+  const fetchUsers = async () => {
     try {
-      const response = await fetch(`http://localhost:9000/api/v1/post/${id}`);
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération du post");
-      }
-      const post = await response.json();
-      console.log(post);
-      setTitle(post.title);
-      setDescription(post.description);
-      setCategoryId(post.category_id);
-      setUserId(post.userId);
-      setImage(post.url); // Initialiser avec l'image actuelle
+      const response = await fetch("http://localhost:9000/api/v1/user/list");
+      const data = await response.json();
+      setUsers(data);
     } catch (error) {
-      console.error("Erreur:", error);
+      console.error("Erreur lors de la récupération des utilisateurs :", error);
     }
   };
 
   useEffect(() => {
+    if (currentPost) {
+      setTitle(currentPost.title || "");
+      setDescription(currentPost.description || "");
+      setCategoryId(currentPost.categoryId || "");
+      setUserId(currentPost.userId || "");
+    }
     fetchCategories();
-    updatePost();
-  }, [id]);
+    fetchUsers();
+  }, [currentPost]);
 
-  // Gérer la sélection de fichier et la conversion en base64
-  const handleFileChange = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const maxSize = 5 * 1024 * 1024; // 5 Mo
-      if (file.size > maxSize) {
-        alert(
-          "La taille du fichier est trop grande. Veuillez choisir un fichier de moins de 5 Mo."
-        );
+      if (!file.type.startsWith("image/")) {
+        setError("Veuillez télécharger un fichier image valide.");
+        setImage(null);
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result); // URL base64 de l'image
-      };
-      reader.readAsDataURL(file); // Lire le fichier comme Data URL (base64)
+      if (file.size > 2 * 1024 * 1024) {
+        setError("Le fichier doit faire moins de 2 Mo.");
+        setImage(null);
+        return;
+      }
+      setImage(file);
+      setError(""); // Reset error if the file is valid
     }
   };
 
-  // Soumettre le formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const updatedPost = {
-      id: parseInt(id),
-      title,
-      description,
-      category_id: categoryId,
-      url: image, // Utiliser l'image en base64
-      userId,
-    };
+    const postData = new FormData();
+    postData.append("id", currentPost.id);
+    postData.append("title", title);
+    postData.append("description", description);
+    postData.append("categoryId", categoryId);
+    postData.append("userId", userId);
+    if (image) {
+      postData.append("image", image);
+    }
 
     try {
-      await state.updatePost(updatedPost);
-      navigate("/list");
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour du post:", error);
+      console.log("Objet postData:", postData);
+      await state.updatePost(postData);
+      console.error("Mise a jour");
+      setIsModalToggle(false);
+      fetchPost();
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour du post:", err);
+      setError("Erreur lors de la mise à jour du post. Veuillez réessayer.");
     }
   };
 
   return (
-    <section className="container">
-      <form onSubmit={handleSubmit} className="create-post-form">
-        <div className="back-button-container">
-          <Link to="/list" className="back-button">
-            <FaArrowLeft />
-          </Link>
-          <h2>Modifier votre Post</h2>
-        </div>
-        <label>
-          Titre:
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Description:
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Catégorie:
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            required
-          >
-            <option value="">Sélectionner une catégorie</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="file-upload-label">
-          <span className="upload-button">
-            <FaUpload /> Changez l'image
-          </span>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="file-input"
-          />
-        </label>
-        {image && (
-          <div className="image-preview">
-            <img
-              src={image}
-              alt="Aperçu de l'image"
-              style={{ maxWidth: "200px" }}
-            />
-          </div>
-        )}
-        <button type="submit" className="submit-button">
-          Mettre à jour
+    <div className="modal-overlay">
+      <aside className="modal-form active">
+        <button
+          className="close-button"
+          onClick={() => setIsModalToggle(false)}
+          aria-label="Fermer la modal"
+        >
+          <FaTimes />
         </button>
-      </form>
-    </section>
+        <form onSubmit={handleSubmit} className="create-post-form">
+          <h2>Modifier votre Post</h2>
+          <label>
+            Titre:
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Description:
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Catégorie:
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              required
+            >
+              <option value="">Sélectionner une catégorie</option>
+              {categories.length > 0 ? (
+                categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.label}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>
+                  Aucune catégorie disponible
+                </option>
+              )}
+            </select>
+          </label>
+          <label>
+            Utilisateur:
+            <select
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              required
+            >
+              <option value="">Sélectionner un utilisateur</option>
+              {users.length > 0 ? (
+                users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.username}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>
+                  Aucun utilisateur disponible
+                </option>
+              )}
+            </select>
+          </label>
+          <label className="file-upload-label">
+            <span className="upload-button">
+              <FaUpload /> Téléchargez l'image
+            </span>
+            <input
+              type="file"
+              className="file-input"
+              onChange={handleImageChange}
+            />
+          </label>
+          {image ? (
+            <div className="image-preview">
+              <img
+                src={URL.createObjectURL(image)}
+                alt="Aperçu de l'image"
+                style={{ maxWidth: "200px" }}
+              />
+            </div>
+          ) : (
+            currentPost.image && (
+              <div className="image-preview">
+                <img
+                  src={`http://localhost:9000/images/${currentPost.image.url}`} // Assurez-vous que l'URL est correcte ici
+                  alt="Image existante"
+                  style={{ maxWidth: "200px" }}
+                />
+              </div>
+            )
+          )}
+
+          {error && <p className="error-message">{error}</p>}
+          <button type="submit" className="submit-button">
+            Mettre à jour
+          </button>
+        </form>
+      </aside>
+    </div>
   );
 }
+
+Update.propTypes = {
+  setIsModalToggle: PropTypes.func.isRequired,
+  fetchPost: PropTypes.func.isRequired,
+  currentPost: PropTypes.object.isRequired,
+};
 
 export default Update;

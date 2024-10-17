@@ -3,7 +3,7 @@ import Loading from "../../Loading";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import CreateModal from "../Comment/Create";
 import UpdateModal from "../Comment/Update";
-// import DeleteModal from "../Comment/Delete";
+import DeleteModal from "../Comment/Delete";
 
 function User() {
   const [comments, setComments] = useState(null);
@@ -23,6 +23,23 @@ function User() {
     const data = await response.json();
     setComments(data);
   };
+
+  async function onClickDeleteComment(id) {
+    const response = await fetch(
+      "http://localhost:9000/api/v1/comment/remove/" + id,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+    if (response.ok) {
+      fetchComment();
+      setIsDeleteToggle(false); // Fermer la modal après suppression
+    }
+  }
 
   useEffect(() => {
     fetchComment();
@@ -59,8 +76,8 @@ function User() {
             <th>Message</th>
             <th>Date de publication</th>
             <th>Status</th>
-            <th>Post_id</th>
-            <th>User_id</th>
+            <th>Article</th>
+            <th>Créateur</th>
             <th className="buttons">Actions</th>
           </tr>
         </thead>
@@ -71,8 +88,8 @@ function User() {
               <td>{comment.message}</td>
               <td>{new Date(comment.created_at).toLocaleString()}</td>
               <td>{comment.status}</td>
-              <td>{comment.post_id}</td>
-              <td>{comment.user_id}</td>
+              <td>{comment.title}</td>
+              <td>{comment.username}</td>
               <td>
                 <div className="button-group">
                   <button
@@ -100,7 +117,7 @@ function User() {
         />
       )}
 
-      {isUpdateModalToggle && currentCategory && (
+      {isUpdateModalToggle && currentComment && (
         <UpdateModal
           setIsModalToggle={setIsUpdateModalToggle}
           fetchComment={fetchComment}

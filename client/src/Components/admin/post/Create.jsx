@@ -1,21 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { FaTimes, FaUpload } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { PostContext } from "../../../store/post/PostContext";
 
-function Create({ setIsModalToggle, fetchPost }) {
+function Create({ setIsModalToggle }) {
   const state = useContext(PostContext);
-  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [userId, setUserId] = useState("");
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
-
-  const userId = useSelector((state) => state.user.userId);
 
   const fetchCategories = async () => {
     try {
@@ -33,8 +30,19 @@ function Create({ setIsModalToggle, fetchPost }) {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:9000/api/v1/user/list");
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des utilisateurs :", error);
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
+    fetchUsers();
   }, []);
 
   const handleImageChange = (e) => {
@@ -42,6 +50,11 @@ function Create({ setIsModalToggle, fetchPost }) {
     if (file) {
       if (!file.type.startsWith("image/")) {
         setError("Veuillez télécharger un fichier image valide.");
+        setImage(null);
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        setError("Le fichier doit faire moins de 2 Mo.");
         setImage(null);
         return;
       }
@@ -58,14 +71,15 @@ function Create({ setIsModalToggle, fetchPost }) {
       return;
     }
 
+    // Créer l'objet postData
     const postData = new FormData();
     postData.append("title", title);
     postData.append("description", description);
-    postData.append("categoryId", categoryId); // Assurez-vous que c'est le bon nom
+    postData.append("categoryId", categoryId);
     postData.append("userId", userId);
-    if (image) {
-      postData.append("image", image);
-    }
+    postData.append("image", image);
+
+    console.log("Objet postData:", postData);
 
     try {
       await state.createPost(postData);
@@ -74,8 +88,8 @@ function Create({ setIsModalToggle, fetchPost }) {
       setDescription("");
       setCategoryId("");
       setImage(null);
+      setIsModalToggle(false);
       fetchPost(""); // Récupérer les posts mis à jour
-      navigate("/post"); // Rediriger après la création
     } catch (err) {
       console.error("Erreur lors de la création du post:", err);
       setError("Erreur lors de la création du post. Veuillez réessayer.");
@@ -122,7 +136,7 @@ function Create({ setIsModalToggle, fetchPost }) {
               required
             >
               <option value="">Sélectionner une catégorie</option>
-              {Array.isArray(categories) && categories.length > 0 ? (
+              {categories.length > 0 ? (
                 categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.label}
@@ -135,6 +149,29 @@ function Create({ setIsModalToggle, fetchPost }) {
               )}
             </select>
           </label>
+
+          <label>
+            Utilisateur:
+            <select
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              required
+            >
+              <option value="">Sélectionner un utilisateur</option>
+              {users.length > 0 ? (
+                users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.username}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>
+                  Aucun utilisateur disponible
+                </option>
+              )}
+            </select>
+          </label>
+
           <label className="file-upload-label">
             <span className="upload-button">
               <FaUpload /> Téléchargez l'image

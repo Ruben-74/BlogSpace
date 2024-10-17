@@ -16,22 +16,50 @@ const getAll = async (req, res) => {
 const findAllFromID = async (req, res) => {
   try {
     const { id } = req.params;
-    const [comments] = await Comment.findAllFromID(id);
-    // console.log(comments)
+    const comments = await Comment.findAllFromPostId(id);
+
+    console.log("Fetched comments:", comments);
+
+    // Vérifiez si des commentaires existent
+
+    if (!comments || comments.length === 0) {
+      return res.status(200).json([]); // Renvoie un tableau vide
+    }
+
     res.status(200).json(comments);
   } catch (err) {
-    res.status(500).json({ msg: err.message });
+    console.error("Erreur dans findAllFromID:", err.message);
+    res.status(500).json({
+      msg: "Une erreur est survenue lors de la récupération des commentaires.",
+    });
   }
 };
 
 // Create a new comment
 const create = async (req, res) => {
   try {
-    const { message, post_id, user_id } = req.body; // Assuming these fields are sent in the request body
-    const [result] = await Comment.create({ message, post_id, user_id });
-    res.status(201).json({ msg: "Comment created", id: result.insertId });
+    const { message, post_id, user_id } = req.body; // Récupérer les champs du corps de la requête
+
+    console.log("Comment ", req.body);
+
+    // Vérification des champs requis
+    if (!message || !post_id || !user_id) {
+      return res
+        .status(400)
+        .json({ msg: "Missing required fields: message, post_id, or user_id" });
+    }
+
+    // Créer le commentaire
+    const result = await Comment.create({ message, post_id, user_id });
+    console.log("Comment created:", result);
+
+    // Assure-toi que result a bien un id avant de l'utiliser
+    res
+      .status(201)
+      .json({ msg: "Comment created", id: result.id || result.insertId });
   } catch (err) {
-    res.status(500).json({ msg: err.message });
+    console.error("Error creating comment:", err);
+    res.status(500).json({ msg: "Database error while creating comment" });
   }
 };
 
@@ -39,10 +67,27 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { message } = req.body; // Assuming only the message is updated
-    await Comment.update(message, id);
-    res.status(200).json({ msg: "Comment updated" });
+    const { message, status, post_id, user_id } = req.body;
+
+    // Vérification des champs requis
+    if (!message || !post_id || !user_id || status === undefined) {
+      return res
+        .status(400)
+        .json({ msg: "Tous les champs doivent être remplis." });
+    }
+
+    // Appel à la méthode de mise à jour
+    await Comment.update({
+      message,
+      status,
+      post_id: post_id, // Assurez-vous que post_id est un nombre
+      user_id: user_id, // Assurez-vous que user_id est un nombre
+      id,
+    });
+
+    res.status(200).json({ msg: "Commentaire mis à jour" });
   } catch (err) {
+    console.error("Erreur lors de la mise à jour du commentaire :", err);
     res.status(500).json({ msg: err.message });
   }
 };
@@ -50,13 +95,13 @@ const update = async (req, res) => {
 // Remove a comment
 const remove = async (req, res) => {
   try {
-    const [response] = await Category.remove(req.params.id);
-    console.log(response);
+    const [response] = await Comment.remove(req.params.id);
+
     if (!response.affectedRows) {
       res.status(404).json({ msg: "Comment not found" });
       return;
     }
-    console.log(response);
+
     res.json({ msg: "Comment deleted", id: req.params.id });
   } catch (err) {
     res.status(500).json({ msg: err.message });

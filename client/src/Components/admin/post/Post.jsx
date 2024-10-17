@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { PostContext } from "../../../store/post/PostContext";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { Link } from "react-router-dom";
-
 import CreateModal from "./Create";
 import UpdateModal from "./Update";
-// import DeleteModal from "./Delete";
+import DeleteModal from "./Delete";
 
 function Post() {
   const state = useContext(PostContext);
@@ -13,12 +11,13 @@ function Post() {
   const [isCreateModalToggle, setIsCreateModalToggle] = useState(false);
   const [isUpdateModalToggle, setIsUpdateModalToggle] = useState(false);
   const [isDeleteToggle, setIsDeleteToggle] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState(null);
+  const [currentPost, setCurrentPost] = useState(null);
+  const [error, setError] = useState(""); // Pour gérer les erreurs
 
-  async function fetchPosts() {
+  const fetchPosts = useCallback(async () => {
     try {
       const response = await fetch("http://localhost:9000/api/v1/post/all", {
-        credentials: "include", // L'option credentials doit être incluse dans un objet
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -28,10 +27,12 @@ function Post() {
 
       const dataJSON = await response.json();
       state.listPost(dataJSON);
+      setError(""); // Réinitialiser l'erreur
     } catch (error) {
-      console.error(error.message); // Pour mieux gérer les erreurs
+      console.error(error.message);
+      setError(error.message); // Mettre à jour l'état d'erreur
     }
-  }
+  }, []);
 
   useEffect(() => {
     fetchPosts();
@@ -47,19 +48,33 @@ function Post() {
         }
       );
 
-      if (!response.ok)
-        throw new Error("Erreur lors de la suppression du post");
-
-      // Mettre à jour la liste des posts après suppression
-      state.listPost(state.posts.filter((post) => post.id !== id));
+      if (response.ok) {
+        fetchPosts();
+        setIsDeleteToggle(false);
+      } else {
+        throw new Error("Erreur lors de la suppression du post.");
+      }
     } catch (error) {
       console.error("Erreur:", error);
+      setError(error.message);
     }
+  };
+
+  const handleEditClick = (post) => {
+    setCurrentPost(post);
+    setIsUpdateModalToggle(true);
+  };
+
+  const handleDeleteClick = (post) => {
+    setCurrentPost(post);
+    setIsDeleteToggle(true);
   };
 
   return (
     <section>
       <h1>Liste des Articles</h1>
+      {error && <p className="error-message">{error}</p>}{" "}
+      {/* Affichage des erreurs */}
       <div className="container-list">
         <button
           className="btn-create"
@@ -75,27 +90,28 @@ function Post() {
             <th>ID</th>
             <th>Titre</th>
             <th>Catégorie</th>
-            <th>Author</th>
+            <th>Auteur</th>
             <th className="buttons">Actions</th>
           </tr>
         </thead>
         <tbody>
           {state.posts.map((post, index) => (
             <tr key={index}>
-              {/* Ensure this key is unique */}
               <td>{post.id}</td>
               <td>{post.title}</td>
               <td>{post.label}</td>
               <td>{post.author}</td>
               <td>
                 <div className="button-group">
-                  <Link to={`/update/${post.id}`} className="btn-edit">
+                  <button
+                    className="btn-edit"
+                    onClick={() => handleEditClick(post)}
+                  >
                     <FaEdit />
-                  </Link>
+                  </button>
                   <button
                     className="btn-delete"
-                    aria-label={`Supprimer le post`}
-                    onClick={() => handleDelete(post.id)}
+                    onClick={() => handleDeleteClick(post)}
                   >
                     <FaTrash />
                   </button>
@@ -105,25 +121,22 @@ function Post() {
           ))}
         </tbody>
       </table>
-
       {isCreateModalToggle && (
         <CreateModal
           setIsModalToggle={setIsCreateModalToggle}
           fetchPost={fetchPosts}
         />
       )}
-
-      {isUpdateModalToggle && currentCategory && (
+      {isUpdateModalToggle && currentPost && (
         <UpdateModal
           setIsModalToggle={setIsUpdateModalToggle}
           fetchPost={fetchPosts}
-          currentCategory={currentCategory}
+          currentPost={currentPost}
         />
       )}
-
-      {isDeleteToggle && currentCategory && (
+      {isDeleteToggle && currentPost && (
         <DeleteModal
-          onConfirm={() => onClickDeleteCategory(currentCategory.id)}
+          onConfirm={() => handleDelete(currentPost.id)}
           onClose={() => setIsDeleteToggle(false)}
         />
       )}
