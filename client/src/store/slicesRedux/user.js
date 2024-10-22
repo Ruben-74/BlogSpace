@@ -23,7 +23,9 @@ const userSlice = createSlice({
       state.isLogged = action.payload.isLogged;
       state.avatar = action.payload.user.avatar || "user.png";
       state.role = action.payload.user.role || "user";
-      state.userId = action.payload.user.id || null; // Ensure this is correct
+      state.userId =
+        action.payload.user.id || action.payload.user.userId || "user"; // Vérifie bien ici
+      console.log("Payload de connexion :", state.userId);
       state.authError = null;
     },
     loginFailed(state, action) {

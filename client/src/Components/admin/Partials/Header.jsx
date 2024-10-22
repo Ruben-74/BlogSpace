@@ -4,6 +4,7 @@ import { FaPowerOff, FaSpaceShuttle, FaTimes, FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/slicesRedux/user";
 import { toggleMenu } from "../../../store/slicesRedux/menu";
+import { FaHouse } from "react-icons/fa6";
 
 function Header() {
   const user = useSelector((state) => state.user);
@@ -91,6 +92,12 @@ function Header() {
 
           <div className="links">
             <NavLink
+              to="/"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              <FaHouse size={24} />
+            </NavLink>
+            <NavLink
               to="/post"
               className={({ isActive }) => (isActive ? "active" : "")}
             >
@@ -132,6 +139,7 @@ function Header() {
                     className="avatar"
                   />
                 </NavLink>
+
                 <button
                   className="logout-button"
                   onClick={onClickLogout}
@@ -141,13 +149,23 @@ function Header() {
                 </button>
               </>
             ) : (
-              <button
-                className="logout-button"
-                onClick={onClickLogout}
-                aria-label="Logout"
-              >
-                <FaPowerOff />
-              </button>
+              <>
+                <NavLink to="/dashboard" className="user-info">
+                  <img
+                    src={`/icons/${user.avatar}`}
+                    alt="User Avatar"
+                    className="avatar"
+                  />
+                </NavLink>
+
+                <button
+                  className="logout-button"
+                  onClick={onClickLogout}
+                  aria-label="Logout"
+                >
+                  <FaPowerOff />
+                </button>
+              </>
             )}
           </div>
         </nav>

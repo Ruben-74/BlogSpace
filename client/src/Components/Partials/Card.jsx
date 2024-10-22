@@ -2,33 +2,42 @@ import React from "react";
 import { Link } from "react-router-dom";
 import FormatDate from "../../utils/FormatDate";
 
-function Card(props) {
+function Card({ post }) {
+  if (!post) return null; // Vérifie si le post existe
+
   return (
-    <article className="post-card" key={props.post.id}>
+    <article className="post-card">
       <div className="post-image">
         <img
-          src={`http://localhost:9000/images/${props.post.url}`}
-          alt={`Image for ${props.post.title}`}
-          loading="lazy" // Improves page load time
+          src={`http://localhost:9000/images/${post.url}`}
+          alt={`Image for the post titled "${post.title}"`}
+          loading="lazy"
         />
       </div>
       <div className="post-content">
-        <h2 className="post-title">{props.post.title}</h2>
-        <p className="post-description">{props.post.description}</p>
+        <h2 className="post-title">{post.title}</h2>
+        <p className="post-description">{post.description}</p>
         <div className="post-categories">
-          <span className="post-category">{props.post.label}</span>
+          <span>{post.label}</span>
         </div>
-        <p>
-          par {props.post.author || "Unknown"} le{" "}
-          {FormatDate(props.post.publish_date).toLocaleDateString()} à{" "}
-          {FormatDate(props.post.publish_date).toLocaleTimeString()}
-        </p>
+        <div className="post-author-info">
+          <img
+            src={`/icons/${post.avatar}`} // Assurez-vous que l'URL de l'avatar est correcte
+            alt={`${post.username}'s avatar`}
+            className="author-avatar"
+          />
+          <p>
+            par <span className="author">{post.author || "Unknown"}</span> le{" "}
+            {FormatDate(post.publish_date).toLocaleDateString()} à{" "}
+            {FormatDate(post.publish_date).toLocaleTimeString()}
+          </p>
+        </div>
         <Link
-          to={`/post/${props.post.id}`}
+          to={`/post/${post.id}`}
           className="read-more-button"
-          aria-label={`Read more about ${props.post.title}`}
+          aria-label={`Lire la suite de ${post.title}`}
         >
-          Learn More
+          En savoir plus
         </Link>
       </div>
     </article>

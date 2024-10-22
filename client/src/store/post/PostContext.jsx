@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useCallback, useState } from "react";
 
 // Création du context
 const PostContext = createContext();
@@ -8,9 +8,9 @@ const PostProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
 
   // Fonction pour lister les posts
-  const listPost = (data) => {
+  const listPost = useCallback((data) => {
     setPosts(data);
-  };
+  }, []);
 
   // Fonction pour créer un post
   const createPost = async (postData) => {

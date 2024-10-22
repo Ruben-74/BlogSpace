@@ -3,7 +3,12 @@ import Form from "../Partials/Form";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaSpaceShuttle } from "react-icons/fa";
-import { login, setMsg, updateField } from "../../store/slicesRedux/user";
+import {
+  login,
+  loginFailed,
+  setMsg,
+  updateField,
+} from "../../store/slicesRedux/user";
 import { toggleMenu } from "../../store/slicesRedux/menu";
 
 function Login() {
@@ -11,6 +16,8 @@ function Login() {
   const user = useSelector((state) => state.user);
   // le state du menu
   const menu = useSelector((state) => state.menu);
+
+  const { authError } = useSelector((state) => state.user); // Message d'erreur éventuel
   // on récupère la fonction dispatch pour envoyer des actions
   const dispatch = useDispatch();
   // on récupère la fonction navigate pour la redirection
@@ -69,6 +76,7 @@ function Login() {
         <Link to={"/auth/register"}>Sign up</Link>
       </div>
       <Form submitHandler={submitHandler} isRegister={false}>
+        {authError && <p>{authError}</p>}
         <button type="submit">Login</button>
       </Form>
     </section>

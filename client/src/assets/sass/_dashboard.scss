@@ -26,6 +26,11 @@
   object-fit: cover;
   border: 4px solid #007bff;
   margin-bottom: 1rem;
+  transition: transform 0.3s ease; /* Ajout de transition */
+}
+
+.dashboard__avatar:hover {
+  transform: scale(1.05); /* Zoom léger au survol */
 }
 
 .dashboard__profile-section {
@@ -41,6 +46,7 @@
   font-size: 2rem;
   color: #333;
   margin-bottom: 1rem;
+  font-family: "Arial", sans-serif; /* Exemple de police */
 }
 
 .dashboard__info {
@@ -48,4 +54,20 @@
   color: #666;
   font-weight: 700;
   margin-bottom: 1.5rem;
+}
+
+/* Styles pour les boutons */
+.dashboard__button {
+  background-color: #007bff;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease; /* Transition douce pour le hover */
+}
+
+.dashboard__button:hover {
+  background-color: #0056b3; /* Couleur plus sombre au survol */
 }

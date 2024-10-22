@@ -1,17 +1,19 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useSelector } from "react-redux";
 
-function Comment({ comment, onReplySubmit, onDelete }) {
+function Comment({ comment, onReplySubmit, onDelete, userId }) {
   const [isReplying, setIsReplying] = useState(false);
   const [replyMessage, setReplyMessage] = useState("");
   const [error, setError] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Loading state for replies
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = useSelector((state) => state.user);
 
   const handleReplySubmit = async (e) => {
     e.preventDefault();
     if (replyMessage.trim()) {
-      setIsSubmitting(true); // Start loading
+      setIsSubmitting(true);
       try {
         await onReplySubmit(comment.id, replyMessage);
         setReplyMessage("");
@@ -20,8 +22,10 @@ function Comment({ comment, onReplySubmit, onDelete }) {
       } catch (err) {
         setError("Échec de l'envoi de la réponse.");
       } finally {
-        setIsSubmitting(false); // Stop loading
+        setIsSubmitting(false);
       }
+    } else {
+      setError("Le message ne peut pas être vide.");
     }
   };
 
@@ -30,6 +34,11 @@ function Comment({ comment, onReplySubmit, onDelete }) {
       onDelete(comment.id);
     }
   };
+
+  const hasReplies = comment.replies && comment.replies.length > 0;
+
+  console.log("userId:", userId);
+  console.log("comment.user_id:", comment.user_id);
 
   return (
     <div className="comment">
@@ -45,39 +54,46 @@ function Comment({ comment, onReplySubmit, onDelete }) {
             {new Date(comment.created_at).toLocaleString()}
           </p>
         </div>
-        <button
-          type="button"
-          className="delete-button"
-          onClick={handleDelete}
-          aria-label="Delete comment"
-        >
-          <IoMdClose size={20} />
-        </button>
+
+        {Number(comment.user_id) === user.userId && ( // Vérifie si le commentaire appartient à l'utilisateur
+          <button
+            type="button"
+            className="delete-button"
+            onClick={handleDelete}
+            aria-label="Supprimer le commentaire"
+          >
+            <IoMdClose size={20} />
+          </button>
+        )}
       </div>
       <p className="comment-message">
         {comment.message || "Message indisponible"}
       </p>
 
-      {comment.replies && comment.replies.length > 0 && (
+      {hasReplies && (
         <div className="replies">
           {comment.replies.map((reply) => (
             <Comment
               key={reply.id}
               comment={reply}
               onReplySubmit={onReplySubmit}
-              onDelete={onDelete} // Pass the onDelete function to replies as well
+              onDelete={onDelete}
+              userId={userId}
             />
           ))}
         </div>
       )}
 
-      <button
-        type="button"
-        className="reply-button"
-        onClick={() => setIsReplying((prev) => !prev)}
-      >
-        {isReplying ? "Annuler" : "Répondre"}
-      </button>
+      {!hasReplies && (
+        <button
+          type="button"
+          className="reply-button"
+          onClick={() => setIsReplying((prev) => !prev)}
+          aria-expanded={isReplying}
+        >
+          {isReplying ? "Annuler" : "Répondre"}
+        </button>
+      )}
 
       {isReplying && (
         <form onSubmit={handleReplySubmit} className="reply-form">
@@ -99,9 +115,8 @@ function Comment({ comment, onReplySubmit, onDelete }) {
 
 Comment.propTypes = {
   comment: PropTypes.shape({
+    id: PropTypes.number.isRequired,
     message: PropTypes.string.isRequired,
-    user_id: PropTypes.number.isRequired,
-    post_id: PropTypes.number.isRequired,
     parent_id: PropTypes.number,
     replies: PropTypes.array,
     avatar_label: PropTypes.string.isRequired,
@@ -109,7 +124,7 @@ Comment.propTypes = {
     created_at: PropTypes.string.isRequired,
   }).isRequired,
   onReplySubmit: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired, // New prop for delete function
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default Comment;
