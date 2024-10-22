@@ -34,22 +34,30 @@ const login = async (req, res) => {
     const [[user]] = await Auth.findOneByEmail(email);
 
     if (!user) {
-      res.status(400).json({ msg: "User not found" });
+      return res.status(400).json({ msg: "User not found" });
     }
-    if (user) {
-      const match = await bcrypt.compare(password, user.password);
-      if (match) {
-        const [[userByID]] = await Auth.findUserInfoById(user.id);
-        console.log("dddd", userByID);
-        req.session.user = { id: user.id, ...userByID };
-        res
-          .status(200)
-          .json({ msg: "User logged in", isLogged: true, user: userByID });
-      } else {
-        res.status(400).json({ msg: "Invalid credentials" });
-      }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (match) {
+      console.log("User logged in:", user);
+
+      // Vérifie l'ID de l'utilisateur
+      const [[userByID]] = await Auth.findUserInfoById(user.id);
+      console.log("User info by ID:", userByID);
+
+      // Assigner l'ID correct à la session
+      req.session.user = { id: user.id, ...userByID };
+      console.log("Session user:", req.session.user);
+
+      res
+        .status(200)
+        .json({ msg: "User logged in", isLogged: true, user: userByID });
+    } else {
+      res.status(400).json({ msg: "Invalid credentials" });
     }
   } catch (err) {
+    console.error("Login error:", err);
     res.status(500).json({ msg: err });
   }
 };

@@ -77,13 +77,26 @@ const updateAvatar = async (req, res) => {
 
   const { id } = req.session.user;
   const { avatar_id } = req.params;
-  const [response] = await User.updateAvatar(avatar_id, id);
 
-  if (response.affectedRows === 1) {
-    const [[avatar]] = await User.findOne(avatar_id);
-    req.session.user.avatar = avatar.label;
-    res.json({ msg: "Avatar updated", newAvatar: avatar.label });
-  } else res.status(500).json({ msg: "Avatar not updated" });
+  try {
+    const response = await User.updateAvatar(avatar_id, id); // Ne pas destructurer ici
+
+    if (response.affectedRows === 1) {
+      const results = await User.findUserWithAvatar(id); // Pas de destructuration ici
+      if (results.length > 0) {
+        const avatar = results[0].avatar; // Utiliser le premier élément
+        req.session.user.avatar = avatar;
+        return res.json({ msg: "Avatar updated", newAvatar: avatar });
+      } else {
+        return res.status(404).json({ msg: "User not found" }); // Gérer le cas où l'utilisateur n'est pas trouvé
+      }
+    } else {
+      return res.status(500).json({ msg: "Avatar not updated" });
+    }
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    return res.status(500).json({ msg: "Server error" });
+  }
 };
 
 export { getAll, create_user, update_user, remove_user, updateAvatar };

@@ -12,9 +12,19 @@ class User {
     return await pool.query(SELECT_ALL);
   }
 
-  static async findOne(id) {
-    const FIND_ONE = "SELECT * FROM avatar WHERE id = ?";
-    return await pool.execute(FIND_ONE, [id]);
+  static async findUserWithAvatar(id) {
+    const FIND_ONE = `
+    SELECT u.id, u.username, a.label AS avatar
+    FROM user u
+    LEFT JOIN avatar a ON u.avatar_id = a.id
+    WHERE u.id = ?`;
+    try {
+      const [results] = await pool.execute(FIND_ONE, [id]);
+      return results;
+    } catch (error) {
+      console.error("Error finding user:", error);
+      throw new Error("Database error while finding user");
+    }
   }
 
   static async create(username, email, password, role = "admin", avatarID) {
@@ -66,8 +76,6 @@ class User {
       ]);
     }
 
-    console.log("ffff", UPDATE);
-
     // Execute the query without password
     return await pool.execute(UPDATE, [username, email, avatarId || null, id]);
   }
@@ -79,7 +87,8 @@ class User {
 
   static async updateAvatar(avatar, id) {
     const UPDATE_AVATAR = "UPDATE user SET avatar_id = ? WHERE id = ?";
-    return await pool.execute(UPDATE_AVATAR, [avatar, id]);
+    const [result] = await pool.execute(UPDATE_AVATAR, [avatar, id]); // Assure-toi que 'result' est un tableau
+    return result; // Retourne le résultat directement
   }
 }
 

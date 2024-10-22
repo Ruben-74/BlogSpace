@@ -1,4 +1,5 @@
 import Comment from "../model/Comment.js";
+import User from "../model/User.js";
 
 const sendResponse = (res, status, data) => {
   res.status(status).json(data);
@@ -14,49 +15,56 @@ const getAll = async (req, res) => {
 };
 
 const findAllFromID = async (req, res) => {
+  const postId = req.params.id; // Assure-toi que l'ID du post est dans les paramètres de la requête
+
   try {
-    const { id } = req.params;
-    const comments = await Comment.findAllFromPostId(id);
+    const comments = await Comment.findAllFromPostId(postId);
 
-    console.log("Fetched comments:", comments);
-
-    // Vérifiez si des commentaires existent
-
-    if (!comments || comments.length === 0) {
-      return res.status(200).json([]); // Renvoie un tableau vide
+    if (!comments.length) {
+      return res.status(404).json({ msg: "No comments found for this post." });
     }
 
-    res.status(200).json(comments);
-  } catch (err) {
-    console.error("Erreur dans findAllFromID:", err.message);
-    res.status(500).json({
-      msg: "Une erreur est survenue lors de la récupération des commentaires.",
-    });
+    res.status(200).json(comments); // Renvoie les commentaires au client
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    res.status(500).json({ msg: "Failed to fetch comments." });
   }
 };
 
 // Create a new comment
 const create = async (req, res) => {
   try {
-    const { message, post_id, user_id } = req.body; // Récupérer les champs du corps de la requête
-
-    console.log("Comment ", req.body);
+    console.log("Data received:", req.body); // Pour vérifier ce qui est reçu
+    const { message, post_id, parent_id } = req.body;
+    const user_id = req.session.user ? req.session.user.id : null;
 
     // Vérification des champs requis
     if (!message || !post_id || !user_id) {
-      return res
-        .status(400)
-        .json({ msg: "Missing required fields: message, post_id, or user_id" });
+      return res.status(400).json({ msg: "Missing required fields." });
+    }
+
+    // Vérification de l'existence de l'utilisateur
+    const userWithAvatar = await User.findUserWithAvatar(user_id);
+    if (!userWithAvatar) {
+      return res.status(400).json({ msg: "User not found." });
     }
 
     // Créer le commentaire
-    const result = await Comment.create({ message, post_id, user_id });
-    console.log("Comment created:", result);
+    const result = await Comment.create({
+      message,
+      post_id,
+      parent_id: parent_id || null,
+      user_id,
+      username: userWithAvatar.username,
+      avatar_label: userWithAvatar.avatar, // Vérifie ici que l'avatar est bien passé
+    });
 
-    // Assure-toi que result a bien un id avant de l'utiliser
-    res
-      .status(201)
-      .json({ msg: "Comment created", id: result.id || result.insertId });
+    // Vérifiez si le commentaire a été créé
+    if (!result || !result.id) {
+      return res.status(500).json({ msg: "Failed to create comment." });
+    }
+
+    res.status(201).json(result);
   } catch (err) {
     console.error("Error creating comment:", err);
     res.status(500).json({ msg: "Database error while creating comment" });
@@ -94,17 +102,53 @@ const update = async (req, res) => {
 
 // Remove a comment
 const remove = async (req, res) => {
-  try {
-    const [response] = await Comment.remove(req.params.id);
+  const commentId = req.params.id;
+  const userId = req.session.user ? req.session.user.id : null;
+  const userRole = req.session.user ? req.session.user.role : null; // Récupère le rôle de l'utilisateur
 
-    if (!response.affectedRows) {
-      res.status(404).json({ msg: "Comment not found" });
-      return;
+  // Vérifie si l'utilisateur est connecté
+  if (!userId) {
+    return res.status(403).json({
+      message: "Vous devez être connecté pour supprimer un commentaire.",
+    });
+  }
+
+  try {
+    // Recherche le commentaire
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Commentaire non trouvé." });
     }
 
-    res.json({ msg: "Comment deleted", id: req.params.id });
-  } catch (err) {
-    res.status(500).json({ msg: err.message });
+    // Vérifie si l'utilisateur est un administrateur
+    if (userRole === "admin") {
+      // Si c'est un admin, il peut supprimer le commentaire sans vérifier la propriété
+      const result = await Comment.remove(commentId);
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Commentaire non trouvé." });
+      }
+      return res
+        .status(200)
+        .json({ message: "Commentaire supprimé avec succès." });
+    }
+
+    // Vérifie si le commentaire appartient à l'utilisateur
+    if (comment.user_id !== userId) {
+      return res.status(403).json({
+        message: "Vous ne pouvez pas supprimer ce commentaire.",
+      });
+    }
+
+    // Suppression du commentaire
+    const result = await Comment.remove(commentId);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Commentaire non trouvé." });
+    }
+
+    res.status(200).json({ message: "Commentaire supprimé avec succès." });
+  } catch (error) {
+    console.error("Erreur lors de la suppression du commentaire :", error);
+    res.status(500).json({ message: "Erreur serveur lors de la suppression." });
   }
 };
 

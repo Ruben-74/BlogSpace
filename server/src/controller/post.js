@@ -5,6 +5,21 @@ import fs from "fs/promises";
 
 const IMAGE_DIR = path.join(process.cwd(), "public/images");
 
+const filter_posts = async (req, res) => {
+  const { title } = req.query; // Récupérer le titre des paramètres de la requête
+  console.log("Paramètres de la requête:", req.query); // Log des paramètres de la requête
+
+  try {
+    console.log("Filtrage des posts avec le titre:", title); // Log du titre utilisé pour filtrer
+    const posts = await Post.FilterPost(title); // Appel de la fonction de filtrage avec le titre
+    res.status(200).json(posts); // Renvoie les articles au format JSON
+    console.log("Résultats:", posts); // Log des résultats
+  } catch (error) {
+    console.error("Erreur lors du filtrage des posts:", msg);
+    res.status(500).json({ error: "Erreur lors du filtrage des posts." });
+  }
+};
+
 const create_post = async (req, res) => {
   try {
     const { title, description, categoryId, userId } = req.body;
@@ -173,4 +188,4 @@ const delete_post = async (req, res) => {
   }
 };
 
-export { create_post, update_post, delete_post };
+export { create_post, update_post, delete_post, filter_posts };

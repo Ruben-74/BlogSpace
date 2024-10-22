@@ -8,17 +8,49 @@ class Post {
       const [datas] = await pool.execute(`
         SELECT p.id AS id, p.title AS title, p.description AS description, 
                p.publish_date AS publish_date, u.username AS author, 
-               i.url, c.label 
+               i.url, c.label , a.label as avatar
         FROM post p 
         LEFT JOIN image i ON p.id = i.post_id 
         LEFT JOIN post_category pc ON p.id = pc.post_id 
         LEFT JOIN user u ON p.user_id = u.id
+        LEFT JOIN avatar a ON u.avatar_id = a.id
         LEFT JOIN category c ON pc.category_id = c.id 
         ORDER BY p.id;
       `);
       return datas;
     } catch (err) {
       console.error("Erreur dans getAll:", err.message);
+      throw new Error("Erreur lors de la récupération des posts.");
+    }
+  }
+
+  static async FilterPost(title) {
+    const query = `
+        SELECT p.id AS id, 
+               p.title AS title, 
+               p.description AS description, 
+               p.publish_date AS publish_date, 
+               u.username AS author, 
+               i.url AS image_url, 
+               c.label AS category, 
+               a.label AS avatar
+        FROM post p 
+        LEFT JOIN image i ON p.id = i.post_id 
+        LEFT JOIN post_category pc ON p.id = pc.post_id 
+        LEFT JOIN user u ON p.user_id = u.id
+        LEFT JOIN avatar a ON u.avatar_id = a.id
+        LEFT JOIN category c ON pc.category_id = c.id 
+        WHERE p.title LIKE ? 
+        ORDER BY p.id;
+    `;
+
+    try {
+      const [results] = await pool.execute(query, [`%${title}%`]); // Utilisez les jokers pour le filtrage
+      console.log("Exécution de la requête:", query); // Log la requête SQL
+      console.log("Paramètre title:", `%${title}%`); // Log le paramètre title
+      return results;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des posts:", error.message);
       throw new Error("Erreur lors de la récupération des posts.");
     }
   }

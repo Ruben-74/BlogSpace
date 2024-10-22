@@ -6,7 +6,7 @@ import {
   update_user,
   updateAvatar,
 } from "../controller/user.js";
-import withUserAuth from "../../middlewares/withUserAuth.js";
+import withAuth from "../../middlewares/withAuth.js";
 import withAdminAuth from "../../middlewares/withAdminAuth.js";
 
 const router = Router();
@@ -22,6 +22,6 @@ router.patch("/update/:id", withAdminAuth, update_user);
 // DELETE (DELETE)
 router.delete("/remove/:id", withAdminAuth, remove_user);
 
-router.patch("/avatar/:avatar_id", withUserAuth, updateAvatar);
+router.patch("/avatar/:avatar_id", withAuth, updateAvatar);
 
 export default router;
