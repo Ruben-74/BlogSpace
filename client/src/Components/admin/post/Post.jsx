@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { PostContext } from "../../../store/post/PostContext";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import CreateModal from "./Create";
@@ -14,7 +14,7 @@ function Post() {
   const [currentPost, setCurrentPost] = useState(null);
   const [error, setError] = useState(""); // Pour gérer les erreurs
 
-  const fetchPosts = useCallback(async () => {
+  const fetchPosts = async () => {
     try {
       const response = await fetch("http://localhost:9000/api/v1/post/all", {
         credentials: "include",
@@ -25,14 +25,13 @@ function Post() {
       if (!response.ok)
         throw new Error("Erreur lors de la récupération des posts");
 
-      const dataJSON = await response.json();
-      state.listPost(dataJSON);
-      setError(""); // Réinitialiser l'erreur
+      const data = await response.json();
+      state.setPostList(data);
     } catch (error) {
       console.error(error.message);
       setError(error.message); // Mettre à jour l'état d'erreur
     }
-  }, []);
+  };
 
   useEffect(() => {
     fetchPosts();
@@ -124,7 +123,7 @@ function Post() {
       {isCreateModalToggle && (
         <CreateModal
           setIsModalToggle={setIsCreateModalToggle}
-          fetchPost={fetchPosts}
+          fetchPost={fetchPosts} // Vérifiez que vous passez fetchPosts ici
         />
       )}
       {isUpdateModalToggle && currentPost && (

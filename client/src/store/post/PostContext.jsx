@@ -7,8 +7,8 @@ const PostContext = createContext();
 const PostProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
 
-  // Fonction pour lister les posts
-  const listPost = useCallback((data) => {
+  // Fonction pour mettre à jour la liste des posts
+  const setPostList = useCallback((data) => {
     setPosts(data);
   }, []);
 
@@ -19,7 +19,7 @@ const PostProvider = ({ children }) => {
         "http://localhost:9000/api/v1/post/create",
         {
           method: "POST",
-          body: postData, // FormData est déjà un objet
+          body: postData,
           credentials: "include",
         }
       );
@@ -30,16 +30,15 @@ const PostProvider = ({ children }) => {
       }
 
       const result = await postResponse.json();
-      setPosts((prevPosts) => [
-        ...prevPosts,
-        { ...postData, id: result.postId },
-      ]);
+      console.log("Post créé:", result);
 
-      // Retournez la réponse pour la gestion dans le composant
-      return postResponse; // Renvoie la réponse de l'API
+      // Mettre à jour l'état local avec le nouveau post
+      setPosts((prevPosts) => [...prevPosts, result]); // Ajouter le post créé
+
+      return result;
     } catch (error) {
       console.error("Erreur lors de la création du post:", error.message);
-      throw error; // Relancer l'erreur pour qu'elle soit gérée dans le composant
+      throw error;
     }
   };
 
@@ -76,7 +75,9 @@ const PostProvider = ({ children }) => {
   };
 
   return (
-    <PostContext.Provider value={{ posts, createPost, updatePost, listPost }}>
+    <PostContext.Provider
+      value={{ posts, createPost, updatePost, setPostList }}
+    >
       {children}
     </PostContext.Provider>
   );

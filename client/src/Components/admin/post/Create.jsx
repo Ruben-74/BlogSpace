@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { FaTimes, FaUpload } from "react-icons/fa";
 import { PostContext } from "../../../store/post/PostContext";
 
-function Create({ setIsModalToggle }) {
+function Create({ setIsModalToggle, fetchPost }) {
   const state = useContext(PostContext);
   const [categories, setCategories] = useState([]);
   const [users, setUsers] = useState([]);
@@ -48,16 +48,27 @@ function Create({ setIsModalToggle }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (!file.type.startsWith("image/")) {
-        setError("Veuillez télécharger un fichier image valide.");
+      const validExtensions = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ]; // Extensions d'image valides
+
+      if (!validExtensions.includes(file.type)) {
+        setError(
+          "Veuillez télécharger un fichier image avec une extension valide (.jpg, .jpeg, .png, .gif, .webp)."
+        );
         setImage(null);
         return;
       }
+
       if (file.size > 2 * 1024 * 1024) {
         setError("Le fichier doit faire moins de 2 Mo.");
         setImage(null);
         return;
       }
+
       setImage(file);
       setError(""); // Réinitialiser l'erreur si le fichier est valide
     }
@@ -89,7 +100,7 @@ function Create({ setIsModalToggle }) {
       setCategoryId("");
       setImage(null);
       setIsModalToggle(false);
-      fetchPost(""); // Récupérer les posts mis à jour
+      fetchPost(); // Récupérer les posts mis à jour
     } catch (err) {
       console.error("Erreur lors de la création du post:", err);
       setError("Erreur lors de la création du post. Veuillez réessayer.");

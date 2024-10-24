@@ -1,63 +1,117 @@
 import React, { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
-import CircularProgressBar from "../../utils/circularProgressBar";
+import CircularProgressBar from "../../utils/CircularProgressBar"; // Vérifiez le chemin d'importation
 
-function PanelAdmin() {
-  const [stats, setStats] = useState({
-    totalUsers: 1000,
-    activeUsers: 300,
-    totalArticles: 500,
-    publishedArticles: 300,
-    totalCategories: 50,
-    activeCategories: 40,
-    totalComments: 200,
-    approvedComments: 150,
-  });
-
-  const userPercentage = (stats.activeUsers / stats.totalUsers) * 100;
-  const articlePercentage =
-    (stats.publishedArticles / stats.totalArticles) * 100;
-  const categoryPercentage =
-    (stats.activeCategories / stats.totalCategories) * 100;
-  const commentPercentage =
-    (stats.approvedComments / stats.totalComments) * 100;
+const PanelAdmin = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Simulez une récupération de données (fetch API dans un cas réel)
-    // setStats({ ... });
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:9000/api/v1/stats/all", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const data = await response.json();
+        setStats(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!stats) return <div>No data available</div>;
+
+  // Calcul des pourcentages si les valeurs sont disponibles
+  const userPercentage = stats.user_count
+    ? (stats.active_user_count / stats.user_count) * 100
+    : 0;
+  const articlePercentage = stats.post_count
+    ? (stats.posts_with_comments / stats.post_count) * 100
+    : 0;
+  const categoryPercentage = stats.category_count
+    ? (stats.active_category_count / stats.category_count) * 100
+    : 0;
+  const commentPercentage = stats.comment_count
+    ? (stats.approved_comment_count / stats.comment_count) * 100
+    : 0;
+  const contactPercentage = stats.contact_count
+    ? (stats.watch_contact_count / stats.contact_count) * 100
+    : 0;
+
   return (
-    <>
-      <section className="container">
-        <h1>My dashboard</h1>
-        <section>
-          <h2>Statistiques</h2>
-          <ul className="stats-list">
+    <section className="container">
+      <h1 className="dashboard-title">Mon Tableau de Bord</h1>
+      <section>
+        <h2 className="stats-title">Statistiques</h2>
+        <ul className="stats-list">
+          <div className="stats-row">
             <li className="stats-item">
               <CircularProgressBar percentage={Math.round(userPercentage)} />
-              <span>Nombre d&apos;utilisateurs : {stats.totalUsers}</span>
+              <span className="stats-number">
+                Utilisateurs : {stats.user_count}
+              </span>
+              <span className="stats-detail">
+                {stats.active_user_count} comptes actifs
+              </span>
             </li>
             <li className="stats-item">
               <CircularProgressBar percentage={Math.round(articlePercentage)} />
-              <span>Nombre d&apos;articles : {stats.totalArticles}</span>
+              <span className="stats-number">
+                Articles : {stats.post_count}
+              </span>
+              <span className="stats-detail">
+                {stats.posts_with_comments} avec commentaires
+              </span>
             </li>
             <li className="stats-item">
               <CircularProgressBar
                 percentage={Math.round(categoryPercentage)}
               />
-              <span>Nombre de catégories : {stats.totalCategories}</span>
+              <span className="stats-number">
+                Catégories : {stats.category_count}
+              </span>
+              <span className="stats-detail">
+                {stats.active_category_count} catégorie(s) utilisée(s)
+              </span>
             </li>
+          </div>
+          <div className="stats-row">
             <li className="stats-item">
               <CircularProgressBar percentage={Math.round(commentPercentage)} />
-              <span>Nombre de commentaires : {stats.totalComments}</span>
+              <span className="stats-number">
+                Commentaires : {stats.comment_count}
+              </span>
+              <span className="stats-detail">
+                {stats.approved_comment_count} commentaire(s) valides
+              </span>
             </li>
-          </ul>
-        </section>
+            <li className="stats-item">
+              <CircularProgressBar percentage={Math.round(contactPercentage)} />
+              <span className="stats-number">
+                Messages reçus : {stats.contact_count}
+              </span>
+              <span className="stats-detail">
+                {stats.watch_contact_count} messages lus
+              </span>
+            </li>
+          </div>
+        </ul>
       </section>
-      <Outlet />
-    </>
+    </section>
   );
-}
+};
 
 export default PanelAdmin;

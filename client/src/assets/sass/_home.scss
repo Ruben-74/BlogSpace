@@ -1,10 +1,13 @@
 @import "_globals.scss";
 
 .posts-container {
+  position: relative;
   padding: 1rem;
   max-width: 1200px;
   margin: auto;
   font-family: "Josefin Sans";
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
 }
 
 .posts-title {
@@ -60,7 +63,6 @@
     text-transform: uppercase;
     color: #000;
     border-bottom: 2px solid $accent-color;
-    width: 60%;
 
     &:hover {
       color: $accent-color;
@@ -136,6 +138,8 @@ p {
 }
 
 .loading-message {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
   text-align: center;
   padding: 4rem;
   font-size: 1.5rem;

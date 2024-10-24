@@ -6,7 +6,7 @@ import UpdateModal from "../User/Update";
 import DeleteModal from "../User/Delete";
 
 function User() {
-  const [users, setUsers] = useState(null);
+  const [users, setUsers] = useState([]);
   const [isCreateModalToggle, setIsCreateModalToggle] = useState(false);
   const [isUpdateModalToggle, setIsUpdateModalToggle] = useState(false);
   const [isDeleteToggle, setIsDeleteToggle] = useState(false);
@@ -16,6 +16,7 @@ function User() {
 
   const fetchUsers = async () => {
     setLoading(true);
+    setError(null); // Reset the error state
     try {
       const response = await fetch("http://localhost:9000/api/v1/user/list", {
         method: "GET",
@@ -26,7 +27,7 @@ function User() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch users");
+        throw new Error("Failed to fetch users: " + response.statusText);
       }
 
       const data = await response.json();
@@ -38,13 +39,30 @@ function User() {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const handleToggleActive = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:9000/api/v1/user/toggle/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
-  const handleEditClick = (user) => {
-    setCurrentUser(user);
-    setIsUpdateModalToggle(true);
+      if (!response.ok) {
+        throw new Error(
+          "Erreur lors du changement de statut de l'utilisateur."
+        );
+      }
+
+      fetchUsers(); // Reload user list after toggling status
+    } catch (error) {
+      console.error("Error toggling user status:", error);
+      setError("Erreur lors de la mise à jour du statut.");
+    }
   };
 
   const handleDeleteClick = (user) => {
@@ -52,22 +70,34 @@ function User() {
     setIsDeleteToggle(true);
   };
 
-  async function onClickDeleteUser(id) {
-    const response = await fetch(
-      "http://localhost:9000/api/v1/user/remove/" + id,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
+  const onClickDeleteUser = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:9000/api/v1/user/remove/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete user.");
       }
-    );
-    if (response.ok) {
+
       fetchUsers();
-      setIsDeleteToggle(false); // Fermer la modal après suppression
+      setIsDeleteToggle(false); // Close the modal after deletion
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      setError("Erreur lors de la suppression de l'utilisateur.");
     }
-  }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   if (loading) return <Loading />;
   if (error) return <p className="error-message">{error}</p>;
@@ -92,42 +122,57 @@ function User() {
             <th>Email</th>
             <th>Role</th>
             <th>Avatar</th>
+            <th className="status">Status</th>
             <th className="buttons">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>
-                <img
-                  src={`/icons/${
-                    user.avatar_label ? user.avatar_label : "user.png"
-                  }`}
-                  alt={`Avatar de ${user.username}`}
-                />
-              </td>
-              <td>
-                <div className="button-group">
+          {users.length > 0 ? (
+            users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.username}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <img
+                    src={`/icons/${user.avatar_label || "user.png"}`}
+                    alt={`Avatar de ${user.username}`}
+                  />
+                </td>
+                <td className="status">
                   <button
-                    className="btn-edit"
-                    onClick={() => handleEditClick(user)}
+                    className={`btn-toggle-status ${
+                      user.is_active ? "active" : "inactive"
+                    }`}
+                    onClick={() => handleToggleActive(user.id)}
                   >
-                    <FaEdit />
+                    {user.is_active ? "Désactiver" : "Activer"}
                   </button>
-                  <button
-                    className="btn-delete"
-                    onClick={() => handleDeleteClick(user)}
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
-              </td>
+                </td>
+                <td>
+                  <div className="button-group">
+                    <button
+                      className="btn-edit"
+                      onClick={() => setCurrentUser(user)}
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      className="btn-delete"
+                      onClick={() => handleDeleteClick(user)}
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="7">Aucun utilisateur trouvé.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 

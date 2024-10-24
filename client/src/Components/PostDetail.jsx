@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import formatDate from "../utils/FormatDate";
 import Comment from "./Partials/Comment";
 import { useSelector } from "react-redux";
 
@@ -224,8 +223,7 @@ function PostDetail() {
             {post.description}
           </p>
           <p className="post-date">
-            {formatDate(post.publish_date).toLocaleDateString()} à{" "}
-            {formatDate(post.publish_date).toLocaleTimeString()}
+            {new Date(post.publish_date).toLocaleString()}
           </p>
           <div className="post-categories">
             <span className="post-category">{post.categoryLabel}</span>

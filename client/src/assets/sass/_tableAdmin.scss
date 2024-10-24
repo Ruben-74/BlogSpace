@@ -1,76 +1,80 @@
 // Variables de couleur
-$primary-color: #1a1a1a;
-$accent-color: #f05454;
-$link-color: #007bff;
-$background-color: #f0f0f0;
-$white-color: #fff;
+$primary-color: #1a1a1a; // Couleur principale
+$accent-color: #f05454; // Couleur d'accentuation pour les alertes ou actions importantes
+$link-color: #007bff; // Couleur des liens et des boutons
+$background-color: #f0f0f0; // Couleur de fond
+$white-color: #fff; // Blanc pour les textes et fonds
 $hover-color: #e0e0e0; // Couleur de survol pour les lignes du tableau
 
 // Styles globaux pour la section
 section {
-  border-radius: 8px;
-  max-width: 1400px;
-  padding: 4rem;
-  margin: auto;
+  border-radius: 8px; // Arrondir les coins de la section
+  max-width: 1400px; // Largeur maximale de la section
+  padding: 4rem; // Espacement interne
+  margin: auto; // Centrer la section
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  flex-direction: column; // Disposition en colonne
+  gap: 2rem; // Espacement entre les éléments
 
   h1 {
-    color: $primary-color;
-    font-size: 3.5rem;
-    text-align: center;
-    margin-bottom: 20px;
-    font-weight: bold;
+    color: $primary-color; // Couleur du titre
+    font-size: 3.5rem; // Taille de la police du titre
+    text-align: center; // Centrer le titre
+    margin-bottom: 20px; // Espacement en bas
+    font-weight: bold; // Mettre le texte en gras
   }
 
   .container-list {
     display: flex;
-    justify-content: space-between; // Aligner le titre à gauche et le bouton à droite
-    align-items: center;
-    margin-bottom: 20px;
+    justify-content: space-between; // Espacement entre le titre et le bouton
+    align-items: center; // Aligner verticalement
+    margin-bottom: 20px; // Espacement en bas
 
     .btn-create {
-      background-color: $link-color;
-      color: $white-color;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      font-size: 16px;
+      background-color: $link-color; // Couleur de fond du bouton
+      color: $white-color; // Couleur du texte
+      border: none; // Pas de bordure
+      padding: 10px 20px; // Espacement interne
+      border-radius: 4px; // Coins arrondis
+      cursor: pointer; // Curseur en main
+      transition: background-color 0.3s ease; // Transition au survol
+      font-size: 16px; // Taille de la police
       display: flex;
-      align-items: center;
+      align-items: center; // Aligner le contenu
       gap: 8px; // Espacement entre l'icône et le texte
 
       &:hover {
-        background-color: darken($link-color, 10%);
+        background-color: darken($link-color, 10%); // Couleur de fond au survol
       }
 
       &:focus {
-        outline: 2px solid $link-color;
-        outline-offset: 2px;
+        outline: 2px solid $link-color; // Contour au focus
+        outline-offset: 2px; // Décalage du contour
       }
     }
   }
 
   table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: $white-color;
-    font-family: "Relaway", sans-serif;
+    width: 100%; // Largeur du tableau
+    border-collapse: collapse; // Fusionner les bordures
+    background-color: $white-color; // Couleur de fond du tableau
+    font-family: "Relaway", sans-serif; // Police du tableau
+
+    .status {
+      text-align: center;
+    }
 
     thead {
-      background-color: $primary-color;
-      color: $white-color;
+      background-color: $primary-color; // Couleur d'arrière-plan de l'en-tête
+      color: $white-color; // Couleur du texte de l'en-tête
 
       th {
-        padding: 1.5rem;
-        text-align: start;
-        font-weight: bold;
+        padding: 1.5rem; // Espacement interne des cellules d'en-tête
+        text-align: start; // Alignement du texte
+        font-weight: bold; // Mettre le texte en gras
 
         &.buttons {
-          text-align: center;
+          text-align: center; // Centrer le contenu des colonnes d'actions
         }
       }
     }
@@ -78,11 +82,11 @@ section {
     tbody {
       tr {
         &:nth-child(odd) {
-          background-color: #fafafa;
+          background-color: #fafafa; // Couleur de fond pour les lignes impaires
         }
 
         &:nth-child(even) {
-          background-color: #ffffff;
+          background-color: #ffffff; // Couleur de fond pour les lignes paires
         }
 
         &:hover {
@@ -90,70 +94,106 @@ section {
         }
 
         td {
-          padding: 1.5rem;
-          text-align: start;
-          border-bottom: 1px solid #ddd;
+          padding: 1.5rem; // Espacement interne des cellules
+          text-align: start; // Alignement du texte
+          border-bottom: 1px solid #ddd; // Bordure en bas des cellule
 
           img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%; // Pour un effet circulaire
-            object-fit: cover; // Pour s'assurer que l'image ne se déforme pas
+            width: 50px; // Largeur de l'image
+            height: 50px; // Hauteur de l'image
+            border-radius: 50%; // Arrondir l'image
+            object-fit: cover; // Garder le ratio de l'image
           }
 
           .status-unread {
-            color: black; /* Couleur pour les messages non lus */
-            font-weight: bold; /* Optionnel : mettre en gras */
+            color: black; // Couleur pour les messages non lus
+            font-weight: bold; // Mettre le texte en gras
           }
 
           .status-read {
-            color: black; /* Couleur pour les messages déjà lus */
+            color: black; // Couleur pour les messages déjà lus
+          }
+
+          .btn-toggle-status {
+            background-color: $accent-color; // Couleur de fond par défaut
+            color: $white-color; // Couleur du texte
+            border: none; // Pas de bordure
+            padding: 10px 20px; // Espacement interne
+            border-radius: 4px; // Coins arrondis
+            cursor: pointer; // Curseur en main
+            transition: background-color 0.3s ease; // Transition au survol
+
+            &:hover {
+              background-color: darken(
+                $link-color,
+                10%
+              ); // Couleur de fond au survol
+            }
+
+            &:focus {
+              outline: 2px solid $link-color; // Contour au focus
+              outline-offset: 2px; // Décalage du contour
+            }
+
+            &.active {
+              background-color: green; // Couleur lorsque l'utilisateur est actif
+            }
+
+            &.inactive {
+              background-color: $accent-color; // Couleur lorsque l'utilisateur est inactif
+            }
           }
 
           .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
+            display: flex; // Disposition en ligne pour les boutons
+            justify-content: center; // Centrer les boutons
+            gap: 8px; // Espacement entre les boutons
 
             .btn-edit,
             .btn-delete {
-              background-color: transparent;
-              color: $white-color;
-              border: none;
-              padding: 8px 12px;
-              border-radius: 4px;
-              cursor: pointer;
-              transition: background-color 0.3s ease;
-              font-size: 14px;
-              display: flex;
-              align-items: center;
+              background-color: transparent; // Fond transparent
+              color: $white-color; // Couleur du texte
+              border: none; // Pas de bordure
+              padding: 8px 12px; // Espacement interne
+              border-radius: 4px; // Coins arrondis
+              cursor: pointer; // Curseur en main
+              transition: background-color 0.3s ease; // Transition au survol
+              font-size: 14px; // Taille de la police
+              display: flex; // Disposition en ligne
+              align-items: center; // Aligner verticalement
 
               &:focus {
-                outline: 1px solid $white-color;
+                outline: 1px solid $white-color; // Contour au focus
               }
 
               i {
-                font-size: 16px; // Ajuster la taille de l'icône si nécessaire
+                font-size: 16px; // Ajuster la taille de l'icône
               }
 
               &:hover {
-                background-color: lighten(#ddd, 10%);
+                background-color: lighten(
+                  #ddd,
+                  10%
+                ); // Changer la couleur de fond au survol
               }
             }
 
             .btn-edit {
-              background-color: green;
+              background-color: green; // Couleur pour le bouton d'édition
 
               &:hover {
-                background-color: darken(green, 10%);
+                background-color: darken(green, 10%); // Couleur au survol
               }
             }
 
             .btn-delete {
-              background-color: $accent-color;
+              background-color: $accent-color; // Couleur pour le bouton de suppression
 
               &:hover {
-                background-color: darken($accent-color, 10%);
+                background-color: darken(
+                  $accent-color,
+                  10%
+                ); // Couleur au survol
               }
             }
           }

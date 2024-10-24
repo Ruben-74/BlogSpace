@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import Form from "../Partials/Form";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -52,6 +52,13 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         console.log("Login response data:", data);
+
+        // Vérifie si l'utilisateur est actif
+        if (data.user.is_active === 0) {
+          dispatch(loginFailed({ error: "Votre compte est désactivé." }));
+          return; // Ne pas continuer si le compte est désactivé
+        }
+
         dispatch(login(data)); // Dispatch la connexion avec les infos de l'utilisateur
         navigate("/"); // Rediriger vers la page d'accueil
       } else {

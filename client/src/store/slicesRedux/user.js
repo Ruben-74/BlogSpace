@@ -8,6 +8,7 @@ const initialState = {
   isLogged: false,
   msg: "",
   role: "user",
+  is_active: 1,
   authError: null,
   userId: null, // Ajout de userId
 };
@@ -17,6 +18,11 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     login(state, action) {
+      if (action.payload.user.is_active === 0) {
+        state.authError = "Votre compte est désactivé.";
+        state.isLogged = false; // Mettre à false si l'utilisateur n'est pas actif
+        return; // Arrête l'exécution de la fonction
+      }
       console.log("Payload de connexion :", action.payload);
       state.username = action.payload.user.username; // Ensure this path is correct
       state.email = action.payload.user.email;

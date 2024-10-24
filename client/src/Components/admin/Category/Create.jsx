@@ -4,6 +4,7 @@ import { FaTimes } from "react-icons/fa";
 
 function Create({ setIsModalToggle, fetchCategories }) {
   const [label, setLabel] = useState("");
+  const [error, setError] = useState("");
 
   async function submitCategory(e) {
     e.preventDefault();
@@ -44,6 +45,8 @@ function Create({ setIsModalToggle, fetchCategories }) {
           <FaTimes />
         </button>
         <h1>Créer une Catégorie</h1>
+        {error && <p className="error-message">{error}</p>}{" "}
+        {/* Afficher le message d'erreur */}
         <form onSubmit={submitCategory}>
           <label htmlFor="label">Nom de la catégorie :</label>
           <input

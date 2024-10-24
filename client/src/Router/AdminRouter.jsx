@@ -14,19 +14,22 @@ function AdminRouter() {
   return (
     <>
       <Header />
-      <Routes>
-        <Route path="/" element={<PanelAdmin />} />
-        <Route path="/user" element={<User />} />
-        <Route path="/category" element={<Category />} />
-        <Route path="/post" element={<Post />} />
-        <Route path="/comment" element={<Comment />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route
-          path="/dashboard"
-          element={<ProtectedRoute element={Dashboard} />}
-        />
-        <Route path="*" element={<h1>404</h1>} />
-      </Routes>
+
+      <main className="container">
+        <Routes>
+          <Route path="/" element={<PanelAdmin />} />
+          <Route path="/user" element={<User />} />
+          <Route path="/category" element={<Category />} />
+          <Route path="/post" element={<Post />} />
+          <Route path="/comment" element={<Comment />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route
+            path="/dashboard"
+            element={<ProtectedRoute element={Dashboard} />}
+          />
+          <Route path="*" element={<h1>404</h1>} />
+        </Routes>
+      </main>
       <Footer />
     </>
   );

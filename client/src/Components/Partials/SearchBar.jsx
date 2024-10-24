@@ -1,18 +1,29 @@
-import React, { useState, useEffect, useContext } from "react";
-import { PostContext } from "../../store/post/PostContext";
+import React, { useState, useEffect } from "react";
 
-const SearchBar = ({ setLoading }) => {
+const SearchBar = ({ setPosts, setLoading, setError }) => {
   const [query, setQuery] = useState("");
-  const { listPost } = useContext(PostContext); // On utilise listPost pour mettre à jour les posts
 
-  // Fonction pour effectuer la recherche
-  const fetchPosts = async (searchQuery) => {
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (query) {
+        setLoading(true);
+        setError(""); // Réinitialiser les erreurs avant une recherche
+        fetchPosts(query);
+      } else {
+        // Si la query est vide, récupérer tous les posts
+        fetchAllPosts();
+      }
+    }, 300); // Délais de debouncing
+
+    return () => {
+      clearTimeout(handler); // Nettoie le timeout
+    };
+  }, [query, setLoading, setError]);
+
+  const fetchPosts = async (query) => {
     try {
       const response = await fetch(
-        `http://localhost:9000/api/v1/post/search?title=${searchQuery}`, // Vérifiez la requête ici
-        {
-          credentials: "include",
-        }
+        `http://localhost:9000/api/v1/post/search/${query}`
       );
 
       if (!response.ok) {
@@ -20,23 +31,40 @@ const SearchBar = ({ setLoading }) => {
       }
 
       const data = await response.json();
-      console.log("Résultats des posts:", data);
-      listPost(data); // Met à jour les posts via listPost
+      setPosts(data);
     } catch (error) {
       console.error("Erreur:", error);
+      setError(error.message);
     } finally {
-      setLoading(false);
+      setLoading(false); // Fin du chargement
     }
   };
 
-  // Utilisation d'un useEffect pour rafraîchir la recherche au changement de la query
-  useEffect(() => {
-    if (query) {
-      fetchPosts(query); // Appel direct de la fonction de recherche
-    } else {
-      listPost([]); // Réinitialisation des posts si la query est vide
+  const fetchAllPosts = async () => {
+    setLoading(true); // Démarre le chargement
+    setError(""); // Réinitialiser les erreurs
+    try {
+      const response = await fetch("http://localhost:9000/api/v1/post/all", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des posts.");
+      }
+
+      const data = await response.json();
+      setPosts(data); // Met à jour tous les posts
+    } catch (error) {
+      console.error("Erreur de récupération:", error);
+      setError(error.message); // Mettez à jour l'erreur ici
+    } finally {
+      setLoading(false); // Fin du chargement
     }
-  }, [query, listPost]); // Dépendance sur query et listPost
+  };
 
   return (
     <form onSubmit={(e) => e.preventDefault()} className="search-bar">
@@ -46,7 +74,9 @@ const SearchBar = ({ setLoading }) => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <button type="submit">Rechercher</button>
+      <button type="submit" disabled={!query}>
+        Rechercher
+      </button>
     </form>
   );
 };

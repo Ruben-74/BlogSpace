@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import FormatDate from "../../utils/FormatDate";
 
 function Card({ post }) {
   if (!post) return null; // Vérifie si le post existe
@@ -28,8 +27,7 @@ function Card({ post }) {
           />
           <p>
             par <span className="author">{post.author || "Unknown"}</span> le{" "}
-            {FormatDate(post.publish_date).toLocaleDateString()} à{" "}
-            {FormatDate(post.publish_date).toLocaleTimeString()}
+            {new Date(post.publish_date).toLocaleString()}
           </p>
         </div>
         <Link

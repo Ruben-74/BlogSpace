@@ -6,33 +6,10 @@ $link-color: #007bff;
 $background-color: #f0f0f0;
 $white-color: #fff;
 
-*,
-::before,
-::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-size: 62.5%;
-}
-
 body {
   font-family: "Relaway", sans-serif;
   font-size: 1.6rem;
   color: #333;
-}
-
-a {
-  display: inline-block;
-  text-decoration: none;
-  color: inherit;
-  text-align: center;
-}
-
-ul {
-  list-style-type: none;
 }
 
 .container {
@@ -40,4 +17,43 @@ ul {
   max-width: 1200px;
   margin: 2rem auto;
   text-align: center;
+}
+
+.loader {
+  position: fixed; /* Changez 'absolute' en 'fixed' */
+  top: 50%; /* Centrer verticalement */
+  left: 50%; /* Centrer horizontalement */
+  transform: translate(-50%, -50%); /* Centrage exact */
+  width: 48px;
+  height: 48px;
+  border: 5px solid $accent-color; /* Couleur du bord */
+  border-bottom-color: transparent; /* Couleur transparente pour l'effet de rotation */
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  z-index: 1000; /* Assurez-vous qu'il est au-dessus d'autres éléments */
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards; // Durée de l'animation
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0; // Commence invisible
+  }
+  to {
+    opacity: 1; // Termine visible
+  }
 }

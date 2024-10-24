@@ -20,13 +20,15 @@ function CommentModal({ setIsModalToggle, currentMessage }) {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
-            email: currentMessage.email,
-            subject: `Réponse à votre message`,
-            content: message,
+            email: currentMessage.email, // Récupère l'email de l'utilisateur
+            subject: `Réponse à votre message`, // Sujet de l'email
+            content: message, // Contenu de la réponse
           }),
         }
       );
+      console.log(response);
 
       if (!response.ok) {
         throw new Error("Erreur lors de l'envoi du commentaire.");
@@ -34,6 +36,7 @@ function CommentModal({ setIsModalToggle, currentMessage }) {
 
       alert("Commentaire envoyé avec succès !");
       setMessage(""); // Reset message field
+      setIsModalToggle(false); // Ferme la modal après l'envoi
     } catch (err) {
       console.error(err);
       setError("Erreur lors de l'envoi du commentaire. Veuillez réessayer.");
