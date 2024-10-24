@@ -24,15 +24,15 @@ class Post {
     }
   }
 
-  static async FilterPost(title) {
+  static async FilterPost(title, label) {
     const query = `
         SELECT p.id AS id, 
                p.title AS title, 
                p.description AS description, 
                p.publish_date AS publish_date, 
                u.username AS author, 
-               i.url AS image_url, 
-               c.label AS category, 
+               i.url, 
+               c.label, 
                a.label AS avatar
         FROM post p 
         LEFT JOIN image i ON p.id = i.post_id 
@@ -40,14 +40,13 @@ class Post {
         LEFT JOIN user u ON p.user_id = u.id
         LEFT JOIN avatar a ON u.avatar_id = a.id
         LEFT JOIN category c ON pc.category_id = c.id 
-        WHERE p.title LIKE ? 
-        ORDER BY p.id;
+        WHERE p.title LIKE ? OR c.label LIKE ?
+        ORDER BY p.id LIMIT 25;
     `;
 
     try {
-      const [results] = await pool.execute(query, [`%${title}%`]); // Utilisez les jokers pour le filtrage
-      console.log("Exécution de la requête:", query); // Log la requête SQL
-      console.log("Paramètre title:", `%${title}%`); // Log le paramètre title
+      const [results] = await pool.execute(query, [`%${title}%`, `${label}%`]); // Utilisez les jokers pour le filtrage
+
       return results;
     } catch (error) {
       console.error("Erreur lors de la récupération des posts:", error.message);
@@ -84,6 +83,15 @@ class Post {
 
   // Ajouter une image pour un post
   static async addImage(url, alt_img, postId) {
+    // Vérification si l'image existe déjà
+    const checkImageQuery = `SELECT id FROM image WHERE url = ? LIMIT 1`;
+    const [rows] = await pool.execute(checkImageQuery, [url]);
+
+    if (rows.length > 0) {
+      throw new Error("Une image avec ce nom existe déjà.");
+    }
+
+    // Si l'image n'existe pas, on l'insère
     const imageQuery = `INSERT INTO image (url, alt_img, post_id) VALUES (?, ?, ?)`;
     await pool.execute(imageQuery, [url, alt_img, postId]);
   }
@@ -124,6 +132,13 @@ class Post {
   }
 
   static async updateImage(url, alt_img, postId) {
+    const checkImageQuery = `SELECT id FROM image WHERE url = ? LIMIT 1`;
+    const [rows] = await pool.execute(checkImageQuery, [url]);
+
+    if (rows.length > 0) {
+      throw new Error("Une image avec ce nom existe déjà.");
+    }
+
     const imageQuery = `UPDATE image SET url = ?, alt_img = ? WHERE post_id = ?`;
     const [result] = await pool.execute(imageQuery, [url, alt_img, postId]);
 

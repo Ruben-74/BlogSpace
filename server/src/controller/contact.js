@@ -1,4 +1,5 @@
 import Contact from "../model/Contact.js";
+import { sendEmail } from "../services/nodemailer.js";
 
 const getAll = async (req, res) => {
   try {
@@ -58,4 +59,15 @@ const remove = async (req, res) => {
   }
 };
 
-export { getAll, create, update, remove };
+const replyToContact = async (req, res) => {
+  const { email, subject, content } = req.body;
+
+  try {
+    await sendEmail(email, subject, content);
+    res.status(200).json({ msg: "Réponse envoyée avec succès!" });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+export { getAll, create, update, remove, replyToContact };

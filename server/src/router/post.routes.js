@@ -1,11 +1,6 @@
 import express from "express";
-import {
-  create_post,
-  update_post,
-  delete_post,
-  filter_posts,
-} from "../controller/post.js";
-import { home_view, post_view } from "../controller/view.js";
+import { create_post, update_post, delete_post } from "../controller/post.js";
+import { home_view, post_view, filter_posts } from "../controller/view.js";
 import withAdminAuth from "../../middlewares/withAdminAuth.js";
 import { uploadImage } from "../../middlewares/uploads.js";
 
@@ -18,7 +13,7 @@ router.get("/all", home_view);
 router.get("/:id", post_view);
 
 // Obtenir les posts selon le terme de recherche
-router.get("/search", filter_posts);
+router.get("/search/:title", filter_posts);
 
 // CREATE (POST)
 router.post("/create", uploadImage, withAdminAuth, create_post);

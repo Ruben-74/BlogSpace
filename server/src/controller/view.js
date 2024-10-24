@@ -27,4 +27,16 @@ const post_view = async (req, res) => {
   }
 };
 
-export { home_view, post_view };
+const filter_posts = async (req, res) => {
+  const { title } = req.params; // Récupérer le titre des paramètres de la requête
+
+  try {
+    const posts = await Post.FilterPost(title, title); // Appel de la fonction de filtrage avec le titre
+    res.status(200).json(posts); // Renvoie les articles au format JSON
+  } catch (error) {
+    console.error("Erreur lors du filtrage des posts:", msg);
+    res.status(500).json({ error: "Erreur lors du filtrage des posts." });
+  }
+};
+
+export { home_view, post_view, filter_posts };

@@ -10,7 +10,11 @@ class Auth {
 
   static async findOneByEmail(email) {
     // Include username in the SELECT query
-    const SELECT = "SELECT id, email, password FROM user WHERE email = ?";
+    const SELECT = `
+    SELECT user.id, user.username, user.role, user.email, user.password, user.is_active, avatar.label AS avatar 
+    FROM user 
+    LEFT JOIN avatar ON user.avatar_id = avatar.id 
+    WHERE email = ?`;
     return await pool.execute(SELECT, [email]);
   }
 
@@ -18,7 +22,13 @@ class Auth {
     console.log("Fetching user info for ID:", id);
     const SELECT =
       "SELECT username, role, email, password, label AS avatar FROM user LEFT JOIN avatar ON user.avatar_id = avatar.id WHERE user.id = ?";
-    return await pool.execute(SELECT, [id]);
+    try {
+      const [result] = await pool.execute(SELECT, [id]);
+      return result; // Return the result directly
+    } catch (error) {
+      console.error("Error fetching user info by ID:", error);
+      throw new Error("User info lookup failed");
+    }
   }
 }
 

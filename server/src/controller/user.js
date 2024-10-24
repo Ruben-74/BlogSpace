@@ -99,4 +99,28 @@ const updateAvatar = async (req, res) => {
   }
 };
 
-export { getAll, create_user, update_user, remove_user, updateAvatar };
+const toggleUserStatus = async (req, res) => {
+  try {
+    const userId = req.params.id; // Récupérez l'ID de l'utilisateur à partir des paramètres de l'URL
+
+    const [response] = await User.toggleUserActiveStatus(userId);
+
+    if (!response.affectedRows) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res.json({ msg: "User status toggled", userId });
+  } catch (err) {
+    console.error("Error toggling user status:", err);
+    res.status(500).json({ msg: "Server error while toggling user status." });
+  }
+};
+
+export {
+  getAll,
+  create_user,
+  update_user,
+  remove_user,
+  updateAvatar,
+  toggleUserStatus,
+};

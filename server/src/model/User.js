@@ -90,6 +90,15 @@ class User {
     const [result] = await pool.execute(UPDATE_AVATAR, [avatar, id]); // Assure-toi que 'result' est un tableau
     return result; // Retourne le résultat directement
   }
+
+  static async toggleUserActiveStatus(id) {
+    const TOGGLE_STATUS = `
+      UPDATE user
+      SET is_active = NOT is_active
+      WHERE id = ?
+    `;
+    return await pool.execute(TOGGLE_STATUS, [id]);
+  }
 }
 
 export default User;

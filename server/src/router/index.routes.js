@@ -6,6 +6,7 @@ import user_routes from "./user.routes.js";
 import comment_routes from "./comment.routes.js";
 import category_routes from "./category.routes.js";
 import contact_routes from "./contact.routes.js";
+import stats_routes from "./stats.routes.js";
 
 const router = Router();
 
@@ -29,6 +30,9 @@ router.use("/category", category_routes);
 
 //contact
 router.use("/contact", contact_routes);
+
+//Stats
+router.use("/stats", stats_routes);
 
 // GET NOT FOUND (tjr a la fin)
 router.get("*", (req, res) => {

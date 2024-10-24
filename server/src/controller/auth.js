@@ -31,10 +31,18 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const [[user]] = await Auth.findOneByEmail(email);
+    const result = await Auth.findOneByEmail(email);
 
-    if (!user) {
+    // Ensure result is an array and has at least one user
+    if (!result || result.length === 0) {
       return res.status(400).json({ msg: "User not found" });
+    }
+
+    const [[user]] = result; // Destructure the user
+
+    // Check if the user is active
+    if (user.is_active === 0) {
+      return res.status(403).json({ msg: "Votre compte est désactivé." }); // Forbidden status
     }
 
     const match = await bcrypt.compare(password, user.password);
@@ -42,23 +50,17 @@ const login = async (req, res) => {
     if (match) {
       console.log("User logged in:", user);
 
-      // Vérifie l'ID de l'utilisateur
-      const [[userByID]] = await Auth.findUserInfoById(user.id);
-      console.log("User info by ID:", userByID);
-
       // Assigner l'ID correct à la session
-      req.session.user = { id: user.id, ...userByID };
+      req.session.user = { id: user.id, username: user.username, ...user };
       console.log("Session user:", req.session.user);
 
-      res
-        .status(200)
-        .json({ msg: "User logged in", isLogged: true, user: userByID });
+      res.status(200).json({ msg: "User logged in", isLogged: true, user });
     } else {
       res.status(400).json({ msg: "Invalid credentials" });
     }
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ msg: err });
+    res.status(500).json({ msg: "Internal server error" });
   }
 };
 
