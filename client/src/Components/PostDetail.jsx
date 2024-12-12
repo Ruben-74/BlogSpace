@@ -167,20 +167,19 @@ function PostDetail() {
       );
 
       if (response.ok) {
-        await fetchComments(); // Recharge les commentaires après mise à jour
+        const updatedComment = await response.json();
+
+        // Vérifie si `message` existe dans la réponse du serveur
+        const updatedMessageValue = updatedComment?.message || updatedMessage;
+
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment.id === commentId
+              ? { ...comment, message: updatedMessageValue }
+              : comment
+          )
+        );
       }
-
-      const updatedComment = await response.json();
-
-      console.log("ddd", updatedComment);
-
-      setComments((prevComments) =>
-        prevComments.map((comment) =>
-          comment.id === commentId
-            ? { ...comment, message: updatedComment.message }
-            : comment
-        )
-      );
     } catch (error) {
       setError(error.message);
     }

@@ -12,7 +12,7 @@ function Comment({ comment, onReplySubmit, onEditSubmit, onDelete, userId }) {
   const [isEditing, setIsEditing] = useState(false);
   const [replyMessage, setReplyMessage] = useState("");
   const [editMessage, setEditMessage] = useState("");
-  const [error, setError] = useState(null);
+  const [currentMessage, setCurrentMessage] = useState(comment.message || ""); // État local pour le message
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
@@ -29,7 +29,6 @@ function Comment({ comment, onReplySubmit, onEditSubmit, onDelete, userId }) {
         await onReplySubmit(comment.id, replyMessage);
         setReplyMessage("");
         setIsReplying(false);
-        setError(null);
       } catch (err) {
         setError("Échec de l'envoi de la réponse.");
       } finally {
@@ -43,21 +42,17 @@ function Comment({ comment, onReplySubmit, onEditSubmit, onDelete, userId }) {
   /** Fonction pour soumettre une modification du commentaire */
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const updatedComment = await onEditSubmit(comment.id, editMessage);
-
-      // Mettre à jour l'état local pour réafficher les changements
-      setEditMessage("");
-      setIsEditing(false);
-
-      // Mettre à jour l'interface avec le nouveau message
-      comment.message = updatedComment.message;
-    } catch (err) {
-      setError("Échec de la modification du commentaire.");
-    } finally {
-      setIsSubmitting(false);
+    if (editMessage.trim()) {
+      try {
+        await onEditSubmit(comment.id, editMessage); // Mettre à jour dans le backend
+        setCurrentMessage(editMessage); // Met à jour le message localement
+        setIsEditing(false); // Quitte le mode édition
+      } catch (error) {
+        console.error("Erreur lors de l'édition du commentaire :", error);
+        setError("Échec de la mise à jour du commentaire.");
+      }
+    } else {
+      setError("Le commentaire ne peut pas être vide.");
     }
   };
 
@@ -118,7 +113,7 @@ function Comment({ comment, onReplySubmit, onEditSubmit, onDelete, userId }) {
       </div>
 
       <p className="comment-message">
-        {comment.message || "Message indisponible"}
+        {currentMessage || "Message indisponible"}
       </p>
 
       {isMenuOpen && (
