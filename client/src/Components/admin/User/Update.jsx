@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 import { FaTimes } from "react-icons/fa";
 
 function Update({ setIsModalToggle, fetchUsers, currentUser }) {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(currentUser.username);
+  const [email, setEmail] = useState(currentUser.email);
   const [password, setPassword] = useState("");
-  const [avatarId, setAvatarId] = useState("");
+  const [avatarId, setAvatarId] = useState(currentUser.avatar_id);
+  const [role, setRole] = useState(currentUser.role);
   const [avatars, setAvatars] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,13 +25,8 @@ function Update({ setIsModalToggle, fetchUsers, currentUser }) {
   };
 
   useEffect(() => {
-    if (currentUser) {
-      setUsername(currentUser.username || "");
-      setEmail(currentUser.email || "");
-      setAvatarId(currentUser.avatarId || "");
-    }
     fetchAvatars();
-  }, [currentUser]);
+  }, []);
 
   async function submitUpdate(e) {
     e.preventDefault();
@@ -52,19 +48,21 @@ function Update({ setIsModalToggle, fetchUsers, currentUser }) {
 
     setLoading(true);
     try {
+      const data = {
+        id: currentUser.id,
+        username,
+        email,
+        password,
+        role,
+        avatar_id: avatarId,
+      };
       const response = await fetch(
         `http://localhost:9000/api/v1/user/update/${currentUser.id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({
-            id: currentUser.id,
-            username,
-            email,
-            password: password || undefined,
-            avatarId,
-          }),
+          body: JSON.stringify(data),
         }
       );
 
@@ -119,6 +117,17 @@ function Update({ setIsModalToggle, fetchUsers, currentUser }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+
+          <label htmlFor="role">Role : </label>
+          <select
+            name="role"
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
           <label htmlFor="avatarId">Avatar :</label>
           <select
             name="avatarId"

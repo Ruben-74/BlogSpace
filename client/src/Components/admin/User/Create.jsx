@@ -7,6 +7,7 @@ function Create({ setIsModalToggle, fetchUsers }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [avatars, setAvatars] = useState([]);
+  const [role, setRole] = useState("");
   const [error, setError] = useState("");
   const [avatarId, setAvatarId] = useState("");
 
@@ -54,6 +55,7 @@ function Create({ setIsModalToggle, fetchUsers }) {
         username,
         email,
         password,
+        role,
         avatarId,
       }),
     });
@@ -62,6 +64,7 @@ function Create({ setIsModalToggle, fetchUsers }) {
       setUsername("");
       setEmail("");
       setPassword("");
+      setRole("");
       setAvatarId(""); // Réinitialiser l'avatarId
       setAvatars([]);
       setIsModalToggle(false);
@@ -109,6 +112,17 @@ function Create({ setIsModalToggle, fetchUsers }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <label htmlFor="password">Role :</label>
+          <select
+            name="role"
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+          </select>
+
           <label htmlFor="avatarId">Avatar :</label>
           <select
             name="avatarId"

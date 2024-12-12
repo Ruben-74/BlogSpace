@@ -8,14 +8,14 @@ const getAll = async (req, res) => {
 
 const create_user = async (req, res) => {
   try {
-    const { username, email, password, avatarId } = req.body;
+    const { username, email, password, role, avatarId } = req.body;
 
     // Si l'avatar n'est pas fourni, vous pouvez le définir sur null
     const [response] = await User.create(
       username,
       email,
       password,
-      "admin",
+      role,
       avatarId || null
     );
 
@@ -28,27 +28,26 @@ const create_user = async (req, res) => {
 
 const update_user = async (req, res) => {
   try {
-    const { username, email, password, avatarId } = req.body;
+    const { username, email, password, role, avatar_id } = req.body;
 
-    // Ensure all required fields are present
-    if (!username || !email || !req.params.id) {
-      return res.status(400).json({ msg: "Missing required fields." });
-    }
+    const { id } = req.params;
 
+    console.log(req.body);
     // Update the user
     const [response] = await User.update(
       username,
       email,
-      password, // This can be undefined if no password is provided
-      avatarId || null, // Ensure avatarId is null if not provided
-      req.params.id
+      password || null,
+      role,
+      avatar_id || null,
+      id
     );
 
     if (!response.affectedRows) {
-      return res.status(404).json({ msg: "User not found" });
+      return res.status(404).json({ msg: "User not found", id });
     }
 
-    res.json({ msg: "User updated", id: req.params.id });
+    res.json({ msg: "User updated" });
   } catch (err) {
     console.error(err); // Log the error for debugging
     res.status(500).json({ msg: err.message });

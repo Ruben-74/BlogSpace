@@ -10,6 +10,7 @@ function PostDetail() {
   const [loadingPost, setLoadingPost] = useState(true);
   const [loadingComments, setLoadingComments] = useState(true);
   const [error, setError] = useState(null);
+
   const { id } = useParams();
   const user = useSelector((state) => state.user);
 
@@ -60,6 +61,7 @@ function PostDetail() {
       });
 
       const commentMap = {};
+
       datas.forEach((comment) => {
         commentMap[comment.id] = {
           ...comment,
@@ -91,7 +93,6 @@ function PostDetail() {
     fetchComments();
   }, [id, user.isLogged]);
 
-  // Fonction générique pour créer un commentaire ou une réponse
   const createComment = async (message, parentId = null) => {
     if (!message.trim() || !user.isLogged) {
       setError("Vous devez être connecté pour commenter.");
@@ -209,30 +210,26 @@ function PostDetail() {
 
   const handleDeleteComment = async (commentId) => {
     try {
+      // Envoyer la requête pour supprimer le commentaire côté serveur
       const response = await fetch(
         `http://localhost:9000/api/v1/comment/remove/${commentId}`,
         {
           method: "DELETE",
-          credentials: "include", // Pour envoyer les cookies de session
+          credentials: "include",
         }
       );
 
-      // Vérifier la réponse du serveur
       if (!response.ok) {
-        throw new Error("Erreur lors de la suppression du commentaire.");
+        throw new Error("Impossible de supprimer le commentaire.");
       }
 
       // Mettre à jour l'état des commentaires
-      setComments((prevComments) =>
-        prevComments
-          .filter((comment) => comment.id !== commentId) // Supprime le commentaire principal
-          .map((comment) => ({
-            ...comment,
-            replies: comment.replies.filter((reply) => reply.id !== commentId), // Supprime la réponse si c'est un commentaire
-          }))
-      );
+      setComments((prevComments) => {
+        return prevComments.filter((comment) => comment.id !== commentId);
+      });
     } catch (error) {
-      setError(error.message); // Gérer les erreurs
+      console.error("Erreur:", error.message);
+      setError("Une erreur est survenue.");
     }
   };
 

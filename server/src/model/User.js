@@ -39,7 +39,7 @@ class User {
     }
   }
 
-  static async create(username, email, password, role = "admin", avatarID) {
+  static async create(username, email, password, role, avatarID) {
     // Validate inputs
     if (!username || !email || !password) {
       throw new Error("Missing required fields: username, email, or password");
@@ -64,32 +64,37 @@ class User {
     }
   }
 
-  static async update(username, email, password, avatarId, id) {
+  static async update(username, email, password, role, avatar_id, id) {
     // Check required fields
-    if (!username || !email || !id) {
-      throw new Error("Missing required fields: username, email, or id");
-    }
 
     // Prepare the base update query
     let UPDATE =
-      "UPDATE user SET username = ?, email = ?,  avatar_id = ? WHERE id = ?";
+      "UPDATE user SET username = ?, email = ?, role= ?, avatar_id = ? WHERE id = ?";
 
     // If a new password is provided, hash it and adjust the query
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       UPDATE =
-        "UPDATE user SET username = ?, email = ?, password = ?, avatar_id = ? WHERE id = ?";
+        "UPDATE user SET username = ?, email = ?, password = ?, role = ?, avatar_id = ? WHERE id = ?";
       return await pool.execute(UPDATE, [
         username,
         email,
         hashedPassword,
-        avatarId,
+        role,
+        avatar_id,
         id,
       ]);
     }
 
     // Execute the query without password
-    return await pool.execute(UPDATE, [username, email, avatarId || null, id]);
+    return await pool.execute(UPDATE, [
+      username,
+      email,
+      (password = null),
+      role,
+      avatar_id,
+      id,
+    ]);
   }
 
   static async remove(id) {

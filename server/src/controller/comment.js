@@ -1,28 +1,21 @@
 import Comment from "../model/Comment.js";
 import User from "../model/User.js";
 
-const sendResponse = (res, status, data) => {
-  res.status(status).json(data);
-};
-
 const getAll = async (req, res) => {
   try {
     const [comments] = await Comment.findAll();
-    sendResponse(res, 200, comments);
+
+    res.status(200).json(comments);
   } catch (err) {
-    sendResponse(res, 500, { msg: err.message });
+    res.status(500, { msg: err.message });
   }
 };
 
 const findAllFromID = async (req, res) => {
-  const postId = req.params.id; // Assure-toi que l'ID du post est dans les paramètres de la requête
+  const postId = req.params.id;
 
   try {
     const comments = await Comment.findAllFromPostId(postId);
-
-    if (!comments.length) {
-      return res.status(404).json({ msg: "No comments found for this post." });
-    }
 
     res.status(200).json(comments); // Renvoie les commentaires au client
   } catch (error) {
