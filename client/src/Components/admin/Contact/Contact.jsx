@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { FaEye, FaTrash } from "react-icons/fa";
+import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import UpdateModal from "./MessageDetail";
 import DeleteModal from "./Delete";
+import { useDispatch, useSelector } from "react-redux";
+import { setMobile } from "../../../store/slicesRedux/view"; // Import de l'action setMobile
 
 function Contact() {
   const [contacts, setContacts] = useState([]);
+  const { isMobile } = useSelector((state) => state.view);
+  const dispatch = useDispatch();
   const [isUpdateModalToggle, setIsUpdateModalToggle] = useState(false);
   const [isDeleteToggle, setIsDeleteToggle] = useState(false);
   const [currentMessage, setCurrentMessage] = useState(null);
@@ -24,12 +28,21 @@ function Contact() {
 
     const data = await response.json();
     setContacts(data);
-    console.log(data);
   };
 
   useEffect(() => {
+    const handleResize = () => {
+      dispatch(setMobile(window.innerWidth <= 768));
+    };
+
+    window.addEventListener("resize", handleResize);
+
     fetchContact();
-  }, []);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [dispatch]);
 
   const renderStatus = (status) => {
     const statusText =
@@ -98,55 +111,105 @@ function Contact() {
   };
 
   return (
-    <section>
-      <h1>Messagerie</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Content</th>
-            <th>Status</th>
-            <th>Date de Publication</th>
-            <th className="buttons">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+    <section className="container">
+      <h1 className="title-content">Messagerie</h1>
+
+      {isMobile ? (
+        <div className="cards-container">
           {contacts.map((contact) => (
-            <tr key={contact.id}>
-              <td>{contact.id}</td>
-              <td>{contact.username}</td>
-              <td>{contact.email}</td>
-              <td>{contact.content}</td>
-              <td>{renderStatus(contact.status)}</td>
-              <td>{new Date(contact.publish_date).toLocaleString("fr-FR")}</td>
-              <td>
-                <div className="button-group">
-                  <button
-                    className="btn-edit"
-                    onClick={() => handleEditClick(contact)}
-                  >
-                    <FaEye />
-                  </button>
-                  <button
-                    className="btn-delete"
-                    onClick={() => handleDeleteClick(contact)}
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
-              </td>
-            </tr>
+            <div className="card" key={contact.id}>
+              <div className="card-header">
+                <h3>{contact.username}</h3>
+                <p>
+                  <strong>ID:</strong> {contact.id}
+                </p>
+              </div>
+              <div className="card-body">
+                <p>
+                  <strong>Email:</strong> {contact.email}
+                </p>
+
+                <p>
+                  <strong>Message : </strong> {contact.content}
+                </p>
+                <p>
+                  <strong>Date de Publication : </strong>
+                  {new Date(contact.publish_date).toLocaleString()}
+                </p>
+                <span className={``}>
+                  <strong>Status: </strong>
+                  {renderStatus(contact.status)}
+                </span>
+              </div>
+              <div className="card-footer">
+                <button
+                  className="btn-edit"
+                  onClick={() => handleEditClick(contact)}
+                >
+                  <FaEdit />
+                </button>
+                <button
+                  className="btn-delete"
+                  onClick={() => handleDeleteClick(contact)}
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Content</th>
+              <th>Status</th>
+              <th>Date de Publication</th>
+              <th className="buttons">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {contacts.map((contact) => (
+              <tr key={contact.id}>
+                <td>{contact.id}</td>
+                <td>{contact.username}</td>
+                <td>{contact.email}</td>
+                <td>{contact.content}</td>
+                <td>{renderStatus(contact.status)}</td>
+                <td>
+                  {new Date(contact.publish_date).toLocaleString("fr-FR")}
+                </td>
+                <td>
+                  <div className="button-group">
+                    <button
+                      className="btn-edit"
+                      onClick={() => handleEditClick(contact)}
+                    >
+                      <FaEye />
+                    </button>
+                    <button
+                      className="btn-delete"
+                      onClick={() => handleDeleteClick(contact)}
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       {isUpdateModalToggle && currentMessage && (
         <UpdateModal
           setIsModalToggle={setIsUpdateModalToggle}
           fetchContact={fetchContact}
           currentMessage={currentMessage}
+          renderStatus={renderStatus}
         />
       )}
 

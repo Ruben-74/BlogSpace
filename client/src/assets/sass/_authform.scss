@@ -6,7 +6,6 @@ $background-color: #f0f0f0;
 $white-color: #fff;
 
 .form-container {
-  padding-top: 24px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -14,37 +13,38 @@ $white-color: #fff;
   margin: 2rem auto;
   align-items: center;
   width: 100%;
+  overflow-y: auto; // Permet le défilement si le formulaire est trop long
 
   hr {
     margin: 1rem;
-    width: 30%;
+    width: 50%;
     background-color: rgb(197, 205, 215);
   }
 
   .success-message {
     color: green; /* Couleur verte pour le succès */
     font-family: "Josefin Sans";
-    margin: 10px 0; /* Espacement */
-    font-weight: bold; /* Mettre en gras */
+    margin: 10px 0;
+    font-weight: bold;
   }
 
   .info-line {
     display: flex;
     align-items: center;
-    justify-content: flex-start; // Pour aligner à gauche, ou utiliser "space-between" pour un espace entre les deux
-    gap: 10px; // Espace entre le texte et le lien
+    justify-content: flex-start;
+    gap: 10px;
 
     p {
-      margin: 0; // Supprime la marge par défaut du paragraphe
-      font-size: 1.6rem; // Taille de la police du paragraphe
+      margin: 0;
+      font-size: 1.6rem;
       letter-spacing: 1px;
     }
 
     a {
-      font-size: 1.6rem; // Taille de la police du lien
-      color: $accent-color; // Utilise la couleur du lien définie
+      font-size: 1.6rem;
+      color: $accent-color;
       text-decoration: none;
-      font-weight: bold; // Pour faire ressortir le lien
+      font-weight: bold;
       transition: color 0.3s ease;
 
       &:hover {
@@ -55,6 +55,7 @@ $white-color: #fff;
 
   svg {
     color: #f05454;
+    transform: rotate(-90deg);
   }
 
   form {
@@ -64,11 +65,11 @@ $white-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 50%;
+    width: 100%; // Par défaut, prend toute la largeur
+    max-width: 400px; // Largeur maximale pour le formulaire sur mobile
     gap: 0.5rem;
     margin: 1rem auto;
     border: transparent;
-    transition: border-color 0.3s ease;
     font-weight: 600;
     font-family: "Josefin Sans";
 
@@ -91,7 +92,6 @@ $white-color: #fff;
       border: transparent;
       border-radius: 5px;
       margin-bottom: 20px;
-      box-sizing: border-box;
       background-color: $background-color;
       transition: outline 0.3s ease;
 
@@ -109,59 +109,81 @@ $white-color: #fff;
     }
 
     button {
-      color: $white-color; // Texte en blanc pour un meilleur contraste
-      background-color: $primary-color; // Fond noir pour un contraste marqué
+      color: $white-color;
+      background-color: $primary-color;
       font-weight: 600;
       padding: 15px;
       border-radius: 5px;
       text-transform: uppercase;
       cursor: pointer;
       font-size: 1.5rem;
-      font-weight: 600;
-      font-family: "Josefin Sans";
-      transition: background-color 0.3s ease, color 0.3s ease;
       width: 100%;
       border: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
 
-      // Amélioration du contraste au survol
       &:hover {
         background-color: $accent-color;
-        color: $primary-color; // Texte blanc pour le contraste
+        color: $primary-color;
       }
 
       &:disabled {
-        background-color: lighten(
-          $primary-color,
-          40%
-        ); // Couleur désactivée avec contraste suffisant
+        background-color: lighten($primary-color, 40%);
         cursor: not-allowed;
       }
     }
   }
 }
 
-@media (max-width: 600px) {
+// Breakpoint pour tablette min-width 601px et max-width 768px
+@media (min-width: 768px) {
   .form-container {
+    hr {
+      width: 40%;
+    }
     form {
-      width: 100%; // Largeur ajustée pour petits écrans
-      h1 {
-        font-size: 2.5rem; // Réduit la taille du titre
+      width: 80%; // Plus large qu'en mobile
+      max-width: 500px; // Limite la largeur du formulaire
+
+      label {
+        font-size: 1.5rem; // Taille de la police plus petite
       }
 
-      .info-line {
-        flex-direction: column; // Dispose les éléments en colonne
-        align-items: flex-start; // Aligne à gauche
-        gap: 5px; // Réduit l'espace entre les éléments
-      }
-
+      input[type="email"],
+      input[type="password"],
       input[type="text"],
-      input[type="password"] {
-        font-size: 1.4rem; // Réduit la taille de la police des champs de saisie
+      textarea {
+        font-size: 1.5rem; // Taille de la police réduite pour les champs
       }
 
       button {
-        font-size: 1.3rem; // Réduit la taille de la police du bouton
-        padding: 12px; // Ajuste le padding pour les petits écrans
+        font-size: 1.4rem; // Légèrement plus grand que pour mobile
+        padding: 14px;
+      }
+    }
+  }
+}
+
+// Breakpoint pour desktop min-width 769px et max-width 1024px
+@media (min-width: 1024px) {
+  .form-container {
+    form {
+      width: 50%; // Formulaire plus large pour les tablettes et petits écrans de bureau
+      max-width: 700px;
+
+      label {
+        font-size: 1.6rem; // Taille de police standard
+      }
+
+      input[type="email"],
+      input[type="password"],
+      input[type="text"],
+      textarea {
+        font-size: 1.6rem;
+      }
+
+      button {
+        font-size: 1.5rem;
+        padding: 15px;
       }
     }
   }

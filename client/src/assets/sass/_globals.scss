@@ -6,17 +6,31 @@ $link-color: #007bff;
 $background-color: #f0f0f0;
 $white-color: #fff;
 
+html,
+body {
+  height: 100%; /* Garantir que le body occupe toute la hauteur */
+  margin: 0; /* Enlever la marge par défaut */
+}
+
 body {
   font-family: "Relaway", sans-serif;
   font-size: 1.6rem;
   color: #333;
 }
 
+.app {
+  display: flex; /* Utiliser Flexbox pour disposer les éléments */
+  flex-direction: column; /* Disposition verticale */
+  min-height: 100vh; /* Garantir que l'application occupe toute la hauteur de la fenêtre */
+}
+
+main {
+  flex-grow: 1;
+}
+
 .container {
-  padding-top: 24px;
   max-width: 1200px;
   margin: 2rem auto;
-  text-align: center;
 }
 
 .loader {

@@ -41,7 +41,7 @@ function Register() {
 
   return (
     <section className="form-container">
-      <FaSpaceShuttle size={50} style={{ transform: "rotate(-90deg)" }} />
+      <FaSpaceShuttle size={50} />
       <hr />
       <h1>Try BlogSpace for Free</h1>
 

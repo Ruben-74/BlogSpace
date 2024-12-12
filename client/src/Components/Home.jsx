@@ -11,9 +11,8 @@ function Home() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fonction pour charger les posts
     const fetchPosts = async () => {
-      setLoading(true); // Démarre le chargement
+      setLoading(true);
 
       try {
         const response = await fetch("http://localhost:9000/api/v1/post/all", {
@@ -34,17 +33,12 @@ function Home() {
         console.error("Erreur de récupération:", error);
         setError(error.message);
       } finally {
-        setLoading(false); // Fin du chargement
+        setLoading(false);
       }
     };
 
-    // Charger les posts uniquement si le tableau est vide
-    if (posts.length === 0) {
-      fetchPosts();
-    } else {
-      setLoading(false); // Pas de chargement si les posts existent déjà
-    }
-  }, [posts.length]); // Ajout de posts.length comme dépendance
+    fetchPosts();
+  }, []); // Assure-toi que l'appel API ne se fait qu'une seule fois
 
   return (
     <section className="posts-container">

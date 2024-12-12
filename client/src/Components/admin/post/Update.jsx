@@ -129,7 +129,6 @@ function Update({ setIsModalToggle, fetchPost, currentPost }) {
               onChange={(e) => setCategoryId(e.target.value)}
               required
             >
-              <option value="">Sélectionner une catégorie</option>
               {categories.length > 0 ? (
                 categories.map((category) => (
                   <option key={category.id} value={category.id}>
@@ -150,7 +149,6 @@ function Update({ setIsModalToggle, fetchPost, currentPost }) {
               onChange={(e) => setUserId(e.target.value)}
               required
             >
-              <option value="">Sélectionner un utilisateur</option>
               {users.length > 0 ? (
                 users.map((user) => (
                   <option key={user.id} value={user.id}>

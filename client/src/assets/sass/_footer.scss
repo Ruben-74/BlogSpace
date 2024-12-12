@@ -4,33 +4,29 @@ $footer-link-color: #f05454;
 $footer-link-hover-color: #ff6b6b;
 
 .footer {
-  background-color: #333;
-  font-family: "Josefin Sans";
-  color: #fff;
-  position: fixed;
-  bottom: 0;
+  background-color: $footer-background-color;
+  font-family: "Josefin Sans", sans-serif;
+  color: $footer-text-color;
   width: 100%;
-  padding: 2rem 0;
   text-align: center;
 
   .footer-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
+    padding: 1rem;
+    gap: 1rem;
 
     .footer-left {
-      font-size: 1.6rem;
+      font-size: 1.4rem;
     }
 
     .footer-right {
       .footer-link {
         color: $footer-link-color;
         text-decoration: none;
-        margin: 0 1rem;
-        font-size: 1.6rem;
+        margin: 0 0.5rem;
+        font-size: 1.4rem;
 
         &:hover {
           color: $footer-link-hover-color;
@@ -38,24 +34,44 @@ $footer-link-hover-color: #ff6b6b;
       }
     }
   }
-}
 
-@media (max-width: 600px) {
-  .footer-content {
-    flex-direction: column; // Aligner les éléments verticalement
-    align-items: center; // Centrer les éléments horizontalement
-    text-align: center; // Centrer le texte
+  // Tablet styles (min-width: 768px)
+  @media (min-width: 768px) {
+    .footer-content {
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 2rem;
 
-    .footer-left,
-    .footer-right {
-      font-size: 1.4rem; // Réduire la taille de la police pour les petits écrans
-      margin-bottom: 1rem; // Ajouter un espacement vertical entre les sections
+      .footer-left {
+        font-size: 1.6rem;
+      }
+
+      .footer-right {
+        .footer-link {
+          font-size: 1.6rem;
+        }
+      }
     }
+  }
 
-    .footer-right {
-      .footer-link {
-        margin: 0.5rem 0; // Espacement vertical entre les liens
-        font-size: 1.4rem; // Réduire la taille de la police des liens
+  // Desktop styles (min-width: 1024px)
+  @media (min-width: 1024px) {
+    padding: 2rem 0;
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+
+      .footer-left {
+        font-size: 1.8rem;
+      }
+
+      .footer-right {
+        .footer-link {
+          margin: 0 1rem;
+          font-size: 1.8rem;
+        }
       }
     }
   }

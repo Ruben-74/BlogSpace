@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { FaTimes } from "react-icons/fa";
 
-function Create({ setIsModalToggle, fetchComment, currentComment }) {
-  const [message, setMessage] = useState("");
-  const [userId, setUserId] = useState("");
-  const [postId, setPostId] = useState("");
-  const [status, setStatus] = useState("En attente");
+function Update({ setIsModalToggle, fetchComment, currentComment }) {
+  const [message, setMessage] = useState(currentComment?.message || "");
+  const [userId, setUserId] = useState(currentComment?.user_id);
+  const [postId, setPostId] = useState(currentComment?.post_id);
+  const [status, setStatus] = useState(currentComment.status || "visible");
   const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
 
@@ -33,13 +33,6 @@ function Create({ setIsModalToggle, fetchComment, currentComment }) {
   };
 
   useEffect(() => {
-    if (currentComment) {
-      setMessage(currentComment.message || "");
-      setUserId(currentComment.userId || "");
-      setPostId(currentComment.postId || "");
-      setStatus(currentComment.status || "");
-    }
-
     fetchUsers();
     fetchPosts();
   }, []);
@@ -47,11 +40,6 @@ function Create({ setIsModalToggle, fetchComment, currentComment }) {
   // Soumettre le commentaire
   const submitComment = async (e) => {
     e.preventDefault();
-
-    if (!message.trim() || !userId || !postId) {
-      alert("Veuillez remplir tous les champs.");
-      return;
-    }
 
     const commentData = {
       message,
@@ -82,14 +70,16 @@ function Create({ setIsModalToggle, fetchComment, currentComment }) {
         const errorMessage = await response.json();
         alert(
           `Erreur : ${
-            errorMessage.msg || "Échec de la création du commentaire."
+            errorMessage.msg || "Échec de la modification du commentaire."
           }`
         );
-        console.error("Échec de la création du commentaire :", errorMessage);
+        console.error(
+          "Échec de la modification du commentaire :",
+          errorMessage
+        );
       }
     } catch (error) {
-      console.error("Erreur lors de la création du commentaire :", error);
-      alert("Une erreur est survenue lors de la soumission du commentaire.");
+      console.error("Erreur lors de la modification du commentaire :", error);
     }
   };
 
@@ -124,7 +114,6 @@ function Create({ setIsModalToggle, fetchComment, currentComment }) {
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
           >
-            <option value="">Sélectionnez un utilisateur</option>
             {users.map((user) => (
               <option key={user.id} value={user.id}>
                 {user.username}
@@ -140,7 +129,6 @@ function Create({ setIsModalToggle, fetchComment, currentComment }) {
             value={postId}
             onChange={(e) => setPostId(e.target.value)}
           >
-            <option value="">Sélectionnez un post</option>
             {posts.map((post) => (
               <option key={post.id} value={post.id}>
                 {post.title}
@@ -155,8 +143,8 @@ function Create({ setIsModalToggle, fetchComment, currentComment }) {
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <option value="en attente">En attente</option>
-            <option value="validé">Validé</option>
+            <option value="visible">Visible</option>
+            <option value="hide">Caché</option>
           </select>
 
           <button className="submit-button" type="submit">
@@ -168,9 +156,9 @@ function Create({ setIsModalToggle, fetchComment, currentComment }) {
   );
 }
 
-Create.propTypes = {
+Update.propTypes = {
   setIsModalToggle: PropTypes.func.isRequired,
   fetchComment: PropTypes.func.isRequired,
 };
 
-export default Create;
+export default Update;

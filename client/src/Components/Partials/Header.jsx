@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaPowerOff, FaSpaceShuttle, FaTimes } from "react-icons/fa";
-import { FaHouse } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/slicesRedux/user";
 import { toggleMenu } from "../../store/slicesRedux/menu";
 
 function Header() {
   const user = useSelector((state) => state.user);
+  console.log(user);
   const menu = useSelector((state) => state.menu);
-
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Utiliser le hook useNavigate
 
   const [type, setType] = useState(
-    window.innerWidth > 600 ? "tabletAndMore" : "mobile"
+    window.innerWidth > 768 ? "tabletAndMore" : "mobile"
   );
 
   useEffect(() => {
     const handleResize = () => {
-      setType(window.innerWidth > 600 ? "tabletAndMore" : "mobile");
+      setType(window.innerWidth > 768 ? "tabletAndMore" : "mobile");
     };
 
     window.addEventListener("resize", handleResize);
@@ -29,63 +28,78 @@ function Header() {
   }, []);
 
   async function onClickLogout() {
-    const response = await fetch("http://localhost:9000/api/v1/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    if (response.status === 200) {
-      const data = await response.json();
-      dispatch(logout(data.isLogged));
-      dispatch(toggleMenu());
-      navigate("/");
+    try {
+      const response = await fetch("http://localhost:9000/api/v1/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      console.log(response);
+      if (response.status === 200) {
+        dispatch(logout());
+        dispatch(toggleMenu());
+        navigate("/"); // Utiliser navigate pour la redirection
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
     }
   }
+
+  const shuttleStyle = {
+    transform: type === "mobile" ? "rotate(-90deg)" : "none",
+    transition: "transform 0.3s ease",
+  };
 
   return (
     <header>
       <div className="header-content">
-        <div className="logo-title">
-          <FaSpaceShuttle size={50} />
-          BlogSpace
-        </div>
-        <button
-          className="menu-toggle"
-          onClick={() => dispatch(toggleMenu())}
-          aria-label="Toggle menu"
-        >
-          <div className="menu-icon">
-            {menu.isOpen ? (
-              <FaTimes size={20} />
-            ) : (
-              <img src={`/icons/${user.avatar}`} alt="menu" />
-            )}
+        {type === "mobile" && (
+          <div className="logo-title">
+            <FaSpaceShuttle size={50} />
+            BlogSpace
           </div>
-        </button>
+        )}
+        {type === "mobile" && menu.isOpen ? (
+          <button
+            className="menu-toggle"
+            onClick={() => dispatch(toggleMenu())}
+            aria-label="Toggle menu"
+          >
+            <div className="menu-icon">
+              <FaTimes size={20} />
+            </div>
+          </button>
+        ) : (
+          <button
+            className="menu-toggle"
+            onClick={() => dispatch(toggleMenu())}
+            aria-label="Toggle menu"
+          >
+            <div className="menu-icon">
+              <img src={`/icons/${user.avatar || "user.png"}`} alt="menu" />
+            </div>
+          </button>
+        )}
+        <nav
+          className={`nav ${
+            type === "mobile" && menu.isOpen ? "burger" : "screen"
+          }`}
+        >
+          <NavLink
+            to="/"
+            className={type === "mobile" ? "logo-column" : "logo-title"}
+          >
+            <FaSpaceShuttle size={50} style={shuttleStyle} />
+            <span>BlogSpace</span>
+          </NavLink>
 
-        <nav className={`nav ${menu.isOpen ? "burger" : "screen"}`}>
           <div className="links">
-            <NavLink
-              to="/"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              <FaHouse size={24} />
-            </NavLink>
-            <NavLink
-              to="/automobile"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
+            <NavLink to="/automobile" aria-label="Automobile">
               Automobile
             </NavLink>
-            <NavLink
-              to="/aviation"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
+            <NavLink to="/aero" aria-label="Aviation">
               Aviation
             </NavLink>
-            <NavLink
-              to="/contact"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
+            <NavLink to="/contact" aria-label="contact">
               Contactez-nous
             </NavLink>
           </div>
@@ -110,10 +124,18 @@ function Header() {
               </>
             ) : (
               <>
-                <NavLink to="/auth/login" className="login-link">
+                <NavLink
+                  to="/auth/login"
+                  className="login-link"
+                  aria-label="connexion"
+                >
                   S'identifier
                 </NavLink>
-                <NavLink to="/auth/register" className="register-link">
+                <NavLink
+                  to="/auth/register"
+                  className="register-link"
+                  aria-label="s'inscrire"
+                >
                   Démarrer
                 </NavLink>
               </>

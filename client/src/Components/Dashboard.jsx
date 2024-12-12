@@ -7,7 +7,7 @@ function Dashboard() {
   const user = useSelector((state) => state.user);
 
   return (
-    <main className="dashboard">
+    <main className="container dashboard">
       <section className="dashboard__header-section">
         <h2 className="dashboard__header">Hello, {user.username}!</h2>
         <img

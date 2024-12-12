@@ -8,7 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 5000;
   backdrop-filter: blur(5px);
 }
 
@@ -21,14 +21,43 @@
   background-color: $white-color;
   padding: 3rem;
   border-radius: 8px;
-  width: 70%;
-  max-width: 800px;
+  width: 90%; // Par défaut pour les petits écrans
+  max-width: 100%;
   opacity: 0;
-  position: absolute; // Changer à relative pour le positionnement de la croix
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+
+  h2 {
+    font-weight: 700;
+    font-size: 2.5rem; // Taille ajustée pour mobile
+    font-family: "Josefin Sans";
+    text-align: center;
+  }
+
+  p {
+    font-size: 1.4rem;
+  }
+
+  .error-msg {
+    color: #e63946; /* Rouge pour l'erreur */
+    background-color: #f9d6d5; /* Fond clair pour l'erreur */
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+
+  .success-msg {
+    color: green;
+    background-color: #d4edda; /* Fond clair pour le succès */
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
 
   &.active {
     opacity: 1;
@@ -56,13 +85,14 @@
     background-color: #4caf50; /* Couleur verte */
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 8px 12px;
     cursor: pointer;
+    font-size: 1.4rem; /* Taille réduite pour mobile */
     transition: background-color 0.3s;
   }
 
   .reply-button:hover {
-    background-color: #45a049; /* Couleur verte plus foncée au survol */
+    background-color: #45a049;
   }
 
   .close-button {
@@ -71,19 +101,12 @@
     right: 1rem;
     background: none;
     border: none;
-    font-size: 2rem; // Ajuste la taille si nécessaire
+    font-size: 2rem;
     color: black;
     cursor: pointer;
     transition: color 0.3s;
-
-    display: flex; // Utilise flexbox pour centrer
-    justify-content: center;
-    align-items: center;
-    width: 40px; // Largeur fixe pour le bouton
-    height: 40px; // Hauteur fixe pour le bouton
-    &:hover {
-      color: $accent-color; // Couleur au survol
-    }
+    width: 40px;
+    height: 40px;
   }
 
   form {
@@ -103,30 +126,6 @@
       margin-bottom: 15px;
     }
 
-    .reply-button {
-      background-color: #f05454;
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 1.5rem;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: #1a1a1a;
-      }
-
-      &:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-      }
-    }
-
     select {
       width: 50%;
       padding: 8px;
@@ -135,9 +134,8 @@
       margin-bottom: 20px;
       box-sizing: border-box;
       background-color: $background-color;
-      box-sizing: border-box;
       font-size: 1.5rem;
-      color: $primary-color; // Définis cette couleur dans tes variables si elle n'existe pas encore
+      color: $primary-color;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
       &:focus {
@@ -176,35 +174,22 @@
     border-radius: 5px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease,
-      box-shadow 0.3s ease;
-
+    transition: background-color 0.3s ease, color 0.3s ease;
     align-self: center;
     border: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
     &:hover {
       background-color: $accent-color;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 5px $accent-color;
-    }
-
-    &:disabled {
-      background-color: lighten($primary-color, 40%);
-      cursor: not-allowed;
     }
   }
+
   .modal-buttons {
     display: flex;
-    justify-content: start;
+    justify-content: center;
     gap: 2rem;
 
     .delete-button {
-      background-color: #e63946; // Rouge pour la suppression
+      background-color: #e63946; /* Rouge pour la suppression */
       color: white;
       border: none;
       font-size: 1.5rem;
@@ -215,12 +200,12 @@
       transition: background-color 0.3s;
 
       &:hover {
-        background-color: #d62839; // Couleur plus sombre au survol
+        background-color: #d62839; /* Couleur plus sombre au survol */
       }
     }
 
     .btn-cancel {
-      background-color: #ccc; // Couleur neutre pour annuler
+      background-color: #ccc; /* Couleur neutre pour annuler */
       color: #333;
       border: none;
       font-size: 1.5rem;
@@ -231,8 +216,56 @@
       transition: background-color 0.3s;
 
       &:hover {
-        background-color: #bbb; // Couleur plus sombre au survol
+        background-color: #bbb; /* Couleur plus sombre au survol */
       }
+    }
+  }
+}
+
+/* Tablet - À partir de 768px */
+@media (min-width: 768px) {
+  .modal-form {
+    width: 80%; /* Plus large sur tablette */
+    h2 {
+      font-size: 3rem; /* Taille augmentée sur tablette */
+    }
+    p {
+      font-size: 1.5rem;
+    }
+    .reply-button {
+      padding: 10px 15px;
+      font-size: 1.6rem;
+    }
+
+    .close-button {
+      top: 1.5rem; /* Légèrement décalé sur tablette */
+      right: 1.5rem;
+    }
+  }
+}
+
+/* Desktop - À partir de 1024px */
+@media (min-width: 1024px) {
+  .modal-form {
+    width: 60%; /* Plus étroit sur desktop pour avoir un peu d'espace autour */
+    max-width: 800px;
+
+    h2 {
+      font-size: 3rem; /* Taille plus grande pour les écrans larges */
+    }
+
+    p {
+      font-size: 1.6rem;
+    }
+
+    .reply-button {
+      padding: 12px 20px; /* Bouton plus grand sur desktop */
+      font-size: 1.8rem;
+    }
+
+    .close-button {
+      top: 2rem;
+      right: 2rem;
     }
   }
 }

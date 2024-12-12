@@ -101,7 +101,7 @@ function Create({ setIsModalToggle, fetchComment }) {
         >
           <FaTimes />
         </button>
-        <h1>Créer un commentaire (Admin)</h1>
+        <h2>Créer un commentaire (Admin)</h2>
         <form onSubmit={submitComment}>
           <label htmlFor="message">Message</label>
           <textarea

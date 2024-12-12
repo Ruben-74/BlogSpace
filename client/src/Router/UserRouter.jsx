@@ -12,33 +12,42 @@ import PrivacyPolicy from "../Components/PrivacyPolicy";
 import TermsOfUse from "../Components/TermsOfUse";
 import Contact from "../Components/Contact";
 import NotFound404 from "../Components/Notfound404";
+import Automobile from "../Components/Automobile";
+import Aero from "../Components/Aero";
 
 function UserRouter() {
   return (
     <>
-      <Header />
-      <Routes>
-        {/* User */}
-        <Route path="/" element={<Home />} />
-        <Route path="/post/:id" element={<PostDetail />} />
+      <div className="app">
+        <Header />
 
-        {/* Authentification */}
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/register" element={<Register />} />
+        <main>
+          <Routes>
+            {/* User */}
+            <Route path="/" element={<Home />} />
+            <Route path="/automobile" element={<Automobile />} />
+            <Route path="/aero" element={<Aero />} />
+            <Route path="/post/:id" element={<PostDetail />} />
 
-        <Route
-          path="dashboard"
-          element={<ProtectedRoute element={Dashboard} />}
-        />
+            {/* Authentification */}
+            <Route path="/auth/login" element={<Login />} />
+            <Route path="/auth/register" element={<Register />} />
 
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-of-service" element={<TermsOfUse />} />
-        <Route path="contact" element={<Contact />} />
+            <Route
+              path="dashboard"
+              element={<ProtectedRoute element={Dashboard} />}
+            />
 
-        <Route path="*" element={<NotFound404 />} />
-      </Routes>
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfUse />} />
+            <Route path="contact" element={<Contact />} />
 
-      <Footer />
+            <Route path="*" element={<NotFound404 />} />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
     </>
   );
 }

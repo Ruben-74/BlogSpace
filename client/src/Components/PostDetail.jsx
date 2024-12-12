@@ -32,11 +32,32 @@ function PostDetail() {
       const response = await fetch(
         `http://localhost:9000/api/v1/comment/${id}`
       );
-      if (!response.ok)
+
+      // Si la réponse est 404, cela signifie qu'il n'y a pas de commentaires
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.warn("Aucun commentaire trouvé pour ce post.");
+          setComments([]); // Aucun commentaire, donc on retourne un tableau vide
+          return; // Ne pas continuer si le post n'existe pas
+        }
         throw new Error("Erreur lors de la récupération des commentaires");
+      }
 
       const datas = await response.json();
-      console.log(datas); // Vérifie le format ici
+
+      // Si aucun commentaire n'est trouvé
+      if (!datas || datas.length === 0) {
+        console.warn("Aucun commentaire disponible.");
+        setComments([]); // Si aucun commentaire n'est trouvé, on ne fait rien
+        return;
+      }
+
+      datas.forEach((comment) => {
+        if (!comment.avatar_label) {
+          comment.avatar_label = "user.png";
+          console.warn("Avatar manquant pour le commentaire", comment);
+        }
+      });
 
       const commentMap = {};
       datas.forEach((comment) => {
@@ -70,8 +91,8 @@ function PostDetail() {
     fetchComments();
   }, [id, user.isLogged]);
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
+  // Fonction générique pour créer un commentaire ou une réponse
+  const createComment = async (message, parentId = null) => {
     if (!message.trim() || !user.isLogged) {
       setError("Vous devez être connecté pour commenter.");
       return;
@@ -80,13 +101,11 @@ function PostDetail() {
     const data = {
       message,
       post_id: Number(id),
+      parent_id: parentId,
       user_id: user.userId,
-      parent_id: null,
       username: user.username,
-      avatar_label: user.avatar,
+      avatarUrl: user.avatar,
     };
-
-    console.log("submit", data);
 
     try {
       const response = await fetch(
@@ -99,76 +118,94 @@ function PostDetail() {
         }
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Erreur: ${errorData.msg || "Erreur inconnue"}`);
-      }
-
       const newComment = await response.json();
 
-      // Ajouter le nouveau commentaire à l'état sans refaire fetch
-      setComments((prev) => [...prev, newComment]);
+      const commentWithAvatar = {
+        ...newComment,
+        avatarUrl: newComment.avatarUrl || user.avatar || "user.png",
+      };
+
+      if (parentId) {
+        // Ajouter comme réponse
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment.id === parentId
+              ? { ...comment, replies: [...comment.replies, commentWithAvatar] }
+              : comment
+          )
+        );
+      } else {
+        // Ajouter comme commentaire principal
+        setComments((prev) => [...prev, commentWithAvatar]);
+      }
+
       setMessage(""); // Réinitialiser le message
     } catch (error) {
       setError(error.message);
     }
   };
 
-  const handleReplySubmit = async (commentId, replyMessage) => {
-    console.log("Suppression du commentaire avec ID:", commentId);
-    if (!user.isLogged) {
-      setError("Vous devez être connecté pour répondre.");
-      return;
-    }
-
-    if (!replyMessage.trim()) {
-      setError("Le message de réponse ne peut pas être vide.");
-      return;
-    }
-
-    const data = {
-      message: replyMessage,
+  const updatedComment = async (updatedMessage, commentId) => {
+    const commentData = {
+      message: updatedMessage,
+      status: "visible",
       post_id: Number(id),
-      parent_id: commentId,
       user_id: user.userId,
-      username: user.username,
-      avatar_label: user.avatar, // Assure-toi que l'avatar est passé ici
     };
-
-    console.log(data);
 
     try {
       const response = await fetch(
-        `http://localhost:9000/api/v1/comment/create`,
+        `http://localhost:9000/api/v1/comment/update/${commentId}`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
           credentials: "include",
-          body: JSON.stringify(data),
+          body: JSON.stringify(commentData),
         }
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          `Erreur lors de l'envoi de la réponse: ${
-            errorData.msg || "Erreur inconnue"
-          }`
-        );
+      if (response.ok) {
+        await fetchComments(); // Recharge les commentaires après mise à jour
       }
 
-      const newReply = await response.json();
+      const updatedComment = await response.json();
+
+      console.log("ddd", updatedComment);
+
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment.id === commentId
-            ? { ...comment, replies: [...comment.replies, newReply] }
+            ? { ...comment, message: updatedComment.message }
             : comment
         )
       );
     } catch (error) {
-      console.error("Erreur dans handleReplySubmit:", error);
       setError(error.message);
     }
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    if (message.trim()) {
+      try {
+        await createComment(message); // Crée un commentaire principal
+        await updatedComment(message);
+
+        setMessage("");
+      } catch (error) {
+        console.error("Erreur :", error);
+      }
+    }
+  };
+
+  const handleReplySubmit = async (commentId, replyMessage) => {
+    createComment(replyMessage, commentId); // Appel à createComment pour une réponse
+  };
+
+  const handleEditSubmit = async (commentId, editedMessage) => {
+    updatedComment(editedMessage, commentId);
   };
 
   const handleDeleteComment = async (commentId) => {
@@ -201,7 +238,7 @@ function PostDetail() {
   };
 
   return (
-    <section className="post-container">
+    <section className="post-container-detail">
       {loadingPost ? (
         <p>Chargement du post...</p>
       ) : (
@@ -212,7 +249,7 @@ function PostDetail() {
             </p>
           )}
           <h1 className="post-title">{post.title}</h1>
-          <div className="post-image">
+          <div className="post-picture">
             <img
               src={`http://localhost:9000/images/${post.imageUrl}`}
               alt={post.title}
@@ -255,6 +292,7 @@ function PostDetail() {
                       key={comment.id}
                       comment={comment}
                       onReplySubmit={handleReplySubmit}
+                      onEditSubmit={handleEditSubmit}
                       onDelete={handleDeleteComment}
                       userId={user.userId}
                     />

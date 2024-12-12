@@ -1,16 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { FaTimes, FaEnvelope } from "react-icons/fa";
 
-function CommentModal({ setIsModalToggle, currentMessage }) {
+function MessageDetail({ setIsModalToggle, currentMessage, renderStatus }) {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  // Focus sur le champ de message au premier rendu de la modal
+  useEffect(() => {
+    const messageField = document.getElementById("message");
+    if (messageField) {
+      messageField.focus();
+    }
+  }, []);
 
   const submitComment = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(""); // Reset error message on new submission
+    setSuccess(false); // Reset success message
 
     try {
       const response = await fetch(
@@ -28,13 +38,15 @@ function CommentModal({ setIsModalToggle, currentMessage }) {
           }),
         }
       );
-      console.log(response);
 
       if (!response.ok) {
-        throw new Error("Erreur lors de l'envoi du commentaire.");
+        const errorDetails = await response.json();
+        throw new Error(
+          errorDetails.msg || "Erreur lors de l'envoi du commentaire."
+        );
       }
 
-      alert("Commentaire envoyé avec succès !");
+      setSuccess(true); // Message de succès
       setMessage(""); // Reset message field
       setIsModalToggle(false); // Ferme la modal après l'envoi
     } catch (err) {
@@ -77,7 +89,7 @@ function CommentModal({ setIsModalToggle, currentMessage }) {
             </tr>
             <tr>
               <th>Status</th>
-              <td>{currentMessage.status}</td>
+              <td>{renderStatus(currentMessage.status)}</td>
             </tr>
             <tr>
               <th>Date de Publication</th>
@@ -97,21 +109,31 @@ function CommentModal({ setIsModalToggle, currentMessage }) {
             onChange={(e) => setMessage(e.target.value)}
             rows="5"
             style={{ resize: "vertical" }}
+            disabled={isLoading}
           />
           <button type="submit" className="reply-button" disabled={isLoading}>
-            <FaEnvelope size={15} /> {isLoading ? "Envoi..." : "Répondre"}
+            {isLoading ? (
+              <span className="spinner"></span> // Vous pouvez ajouter un spinner ici
+            ) : (
+              <FaEnvelope size={15} />
+            )}
+            {isLoading ? "Envoi..." : "Répondre"}
           </button>
         </form>
 
+        {success && (
+          <p className="success-message">Commentaire envoyé avec succès !</p>
+        )}
         {error && <p className="error-message">{error}</p>}
       </aside>
     </div>
   );
 }
 
-CommentModal.propTypes = {
+MessageDetail.propTypes = {
   setIsModalToggle: PropTypes.func.isRequired,
   currentMessage: PropTypes.object.isRequired,
+  renderStatus: PropTypes.func.isRequired,
 };
 
-export default CommentModal;
+export default MessageDetail;

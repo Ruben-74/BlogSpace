@@ -92,7 +92,7 @@ function Update({ setIsModalToggle, fetchUsers, currentUser }) {
         >
           <FaTimes />
         </button>
-        <h1>Modifier un utilisateur</h1>
+        <h2>Modifier un utilisateur</h2>
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={submitUpdate}>
           <label htmlFor="username">Username :</label>
@@ -126,7 +126,6 @@ function Update({ setIsModalToggle, fetchUsers, currentUser }) {
             value={avatarId}
             onChange={(e) => setAvatarId(e.target.value)}
           >
-            <option value="">Sélectionnez un avatar</option>
             {avatars.map((avatar) => (
               <option key={avatar.id} value={avatar.id}>
                 {avatar.label}

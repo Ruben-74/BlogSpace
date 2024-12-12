@@ -82,7 +82,7 @@ function Create({ setIsModalToggle, fetchUsers }) {
         >
           <FaTimes />
         </button>
-        <h1>Créer un utilisateur</h1>
+        <h2>Créer un utilisateur</h2>
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={submitUser}>
           <label htmlFor="username">Username :</label>

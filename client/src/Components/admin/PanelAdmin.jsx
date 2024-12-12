@@ -73,7 +73,7 @@ const PanelAdmin = () => {
                 Articles : {stats.post_count}
               </span>
               <span className="stats-detail">
-                {stats.posts_with_comments} avec commentaires
+                {stats.posts_with_comments} article avec au moins 1 commentaire
               </span>
             </li>
             <li className="stats-item">

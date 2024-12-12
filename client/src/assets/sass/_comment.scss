@@ -61,54 +61,102 @@
     font-family: "Josefin Sans";
   }
 
-  .reply-button {
-    position: absolute; // Position the button absolutely
-    bottom: 10px; // Space from the bottom
-    right: 10px; // Space from the right
-    background-color: transparent; // Make the background transparent
-    color: #1a1a1a; // Color for the text
-    font-weight: 600;
-    font-family: "Josefin Sans";
-    border: none; // No border
+  .menu-button {
     cursor: pointer;
-    padding: 5px 10px;
-    transition: color 0.3s;
+    display: flex;
+    align-items: flex-end; /* Center the icon */
 
     &:hover {
-      color: #f05454; // Change color on hover
+      color: #f05454; /* Change color on hover */
     }
   }
 
-  .reply-form {
-    margin-top: 10px;
+  .dropdown-menu {
+    display: flex;
+    position: absolute; /* Position relative to the parent */
+    top: 10px;
+    right: 40px; /* Align to the right */
+    background: white; /* Background color */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    z-index: 100; /* Ensure it appears above other elements */
+    padding: 10px; /* Padding for content */
 
-    textarea {
-      width: 100%;
-      height: 60px;
-      margin-bottom: 5px;
-      resize: none;
-      padding: 10px; // Add padding to create space for placeholder
+    button {
+      background: none; /* No background */
+      border: none; /* No border */
+      background-color: transparent; // Make the background transparent
+      color: #1a1a1a; // Color for the text
+      font-weight: 600;
+      font-family: "Josefin Sans";
+      border: none; // No border
+      padding: 5px; /* Padding for button */
+      cursor: pointer; /* Pointer cursor */
+      text-align: left; /* Align text to the left */
+      width: 100%; /* Full width */
 
-      &:focus {
-        outline: 1px solid $accent-color;
-        border: transparent;
+      &:hover {
+        color: #f05454; /* Highlight on hover */
       }
+    }
+  }
 
-      &::placeholder {
-        color: gray; // Change this to your desired color
-        font-size: 1.4rem; // Adjust size if needed
+  .buttons-action {
+    display: flex;
+
+    justify-content: space-between;
+
+    .reply-button {
+      display: flex;
+      position: absolute; // Position the button absolutely
+      bottom: 10px; // Space from the bottom
+      right: 10px; // Space from the right
+      background-color: transparent; // Make the background transparent
+      color: #1a1a1a; // Color for the text
+      font-weight: 600;
+      font-family: "Josefin Sans";
+      border: none; // No border
+      cursor: pointer;
+      padding: 5px 10px;
+      transition: color 0.3s;
+
+      &:hover {
+        color: #f05454; // Change color on hover
       }
     }
 
-    button {
-      background-color: #1a1a1a;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
+    .reply-form {
+      textarea {
+        width: 100%;
+        height: 60px;
+        margin-bottom: 5px;
+        resize: none;
+        padding: 10px; // Add padding to create space for placeholder
 
-      &:hover {
-        background-color: #f05454;
+        &:focus {
+          outline: 1px solid $accent-color;
+          border: transparent;
+        }
+
+        &::placeholder {
+          color: gray; // Change this to your desired color
+          font-size: 1.4rem; // Adjust size if needed
+        }
+      }
+
+      button {
+        display: flex;
+        justify-content: space-between;
+        background-color: #1a1a1a;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #f05454;
+        }
       }
     }
   }

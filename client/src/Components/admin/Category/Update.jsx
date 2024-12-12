@@ -3,15 +3,10 @@ import PropTypes from "prop-types";
 import { FaTimes } from "react-icons/fa";
 
 function Update({ setIsModalToggle, fetchCategories, currentCategory }) {
-  const [label, setLabel] = useState("");
+  const [label, setLabel] = useState(currentCategory.label);
   const [isLoading, setIsLoading] = useState(false);
 
   // Utilise useEffect pour initialiser l'input avec la valeur de currentCategory
-  useEffect(() => {
-    if (currentCategory) {
-      setLabel(currentCategory.label); // Récupère le label de la catégorie actuelle
-    }
-  }, [currentCategory]);
 
   async function submitCategory(e) {
     e.preventDefault();

@@ -10,35 +10,57 @@ function AvatarList() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // Fonction pour récupérer les avatars disponibles
     async function fetchAvatar() {
-      const response = await fetch("http://localhost:9000/api/v1/avatar/all", {
-        method: "GET",
-        credentials: "include",
-      });
-      const datas = await response.json();
-      setList(datas);
+      try {
+        const response = await fetch(
+          "http://localhost:9000/api/v1/avatar/all",
+          {
+            method: "GET",
+            credentials: "include", // Inclure les cookies pour la session
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Erreur lors du chargement des avatars");
+        }
+        const datas = await response.json();
+        setList(datas); // Mettre à jour la liste des avatars
+      } catch (error) {
+        console.error("Erreur lors du chargement des avatars:", error);
+      }
     }
 
-    fetchAvatar();
+    fetchAvatar(); // Appeler la fonction pour récupérer les avatars au chargement du composant
   }, []);
 
+  // Fonction pour soumettre le changement d'avatar
   async function submitChangeAvatar(e) {
-    e.preventDefault();
-    // si aucun nouvel avatar n'est sélectionné, on ne fait rien (pas de fetch)
-    if (!newAvatar) return;
-    console.log("newAvatar", newAvatar);
-    const response = await fetch(
-      `http://localhost:9000/api/v1/user/avatar/${newAvatar}`,
-      {
-        method: "PATCH",
-        credentials: "include",
+    e.preventDefault(); // Empêcher la soumission par défaut du formulaire
+
+    if (!newAvatar) return; // Si aucun nouvel avatar n'est sélectionné, on arrête l'exécution
+
+    try {
+      const response = await fetch(
+        `http://localhost:9000/api/v1/user/avatar/${newAvatar}`, // URL avec l'ID de l'avatar
+        {
+          method: "PATCH",
+          credentials: "include", // Inclure les cookies pour la session
+          headers: {
+            "Content-Type": "application/json", // Spécifier le type de contenu
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors du changement d'avatar");
       }
-    );
-    // voir également la route du fetch -> updateAvatar du fichier controller/user.js
-    const data = await response.json();
-    console.log(data);
-    // mise à jour du state avatar avec le nouvel avatar
-    dispatch(setAvatar(data.newAvatar));
+
+      const data = await response.json();
+      dispatch(setAvatar(data.newAvatar)); // Mise à jour du Redux avec le nouvel avatar
+    } catch (error) {
+      console.error("Erreur lors du changement d'avatar:", error);
+      // Optionnel : gérer l'affichage d'un message d'erreur pour l'utilisateur
+    }
   }
 
   return (
@@ -57,7 +79,7 @@ function AvatarList() {
                       name="avatar"
                       id={`avatar-${avatar.id}`}
                       value={avatar.id}
-                      onChange={(e) => setNewAvatar(e.target.value)}
+                      onChange={(e) => setNewAvatar(e.target.value)} // Mettre à jour le nouvel avatar sélectionné
                     />
                     <label
                       htmlFor={`avatar-${avatar.id}`}
@@ -65,7 +87,7 @@ function AvatarList() {
                     >
                       <img
                         className="avatar-list__image"
-                        src={`/icons/${avatar.label}`}
+                        src={`/icons/${avatar.label}`} // Lien vers l'image de l'avatar
                         alt={avatar.label}
                       />
                     </label>
@@ -77,9 +99,8 @@ function AvatarList() {
         </div>
         <button
           type="submit"
-          onClick={submitChangeAvatar}
           className={`avatar-list__button ${!newAvatar ? "disabled" : ""}`}
-          disabled={!newAvatar}
+          disabled={!newAvatar} // Désactiver le bouton si aucun avatar n'est sélectionné
         >
           Change Avatar
         </button>

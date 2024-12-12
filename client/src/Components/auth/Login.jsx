@@ -63,8 +63,15 @@ function Login() {
         navigate("/"); // Rediriger vers la page d'accueil
       } else {
         const errorData = await response.json();
-        console.log(errorData);
-        dispatch(loginFailed({ error: errorData.msg })); // Gestion d'une erreur de login
+        if (errorData.msg === "Utilisateur non trouvé") {
+          dispatch(
+            loginFailed({
+              error: "Compte inexistant. Veuillez vérifier votre email.",
+            })
+          );
+        } else {
+          dispatch(loginFailed({ error: errorData.msg }));
+        }
       }
     } catch (err) {
       dispatch(setMsg("Erreur lors de la connexion. Veuillez réessayer.")); // Gestion d'une erreur de connexion
@@ -73,7 +80,7 @@ function Login() {
 
   return (
     <section className="form-container">
-      <FaSpaceShuttle size={50} style={{ transform: "rotate(-90deg)" }} />
+      <FaSpaceShuttle size={50} />
       <hr />
       <h1>Welcome back to BlogSpace</h1>
 
