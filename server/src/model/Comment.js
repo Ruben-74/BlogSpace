@@ -1,5 +1,4 @@
 import pool from "../config/db.js";
-import User from "./User.js";
 
 class Comment {
   static async findAll() {
@@ -7,13 +6,14 @@ class Comment {
     SELECT 
       c.*,              
       u.username, 
-      p.title 
+      u.avatar_id,
+      p.title
     FROM 
       comment c
-    JOIN 
+    LEFT JOIN 
       post p ON c.post_id = p.id
-    JOIN 
-      user u ON c.user_id = u.id
+    LEFT JOIN 
+      user u ON c.user_id = u.id;
   `;
 
     return await pool.execute(SELECT_ALL);
@@ -21,12 +21,12 @@ class Comment {
 
   static async findAllFromPostId(postId) {
     const SELECT_COMMENTS = `
-   SELECT c.id, c.message, c.created_at, c.user_id, c.parent_id,
-       u.username, a.label AS avatar_label
+   SELECT c.id, c.message, c.created_at, c.user_id, c.status, c.parent_id,
+       u.username, a.label AS avatarUrl
     FROM comment c
     LEFT JOIN user u ON c.user_id = u.id
     LEFT JOIN avatar a ON u.avatar_id = a.id
-    WHERE c.post_id = ?`;
+    WHERE c.post_id = ? AND c.status != 'hide' `;
 
     const [results] = await pool.execute(SELECT_COMMENTS, [postId]);
     return results;
@@ -43,7 +43,7 @@ class Comment {
     }
   }
 
-  // Dans ton endpoint API qui crée un commentaire
+  // creation d'un commentaire
   static async create(data) {
     const INSERT = `
       INSERT INTO comment (message, user_id, post_id, parent_id)
@@ -54,11 +54,11 @@ class Comment {
 
     try {
       if (!message || !post_id || !user_id) {
-        throw new Error("Missing required fields.");
+        console.error("Missing required fields.");
       }
 
       if (message.length < 1 || message.length > 500) {
-        throw new Error("Message must be between 1 and 500 characters.");
+        console.error("le messgae doit contenir entre 1 et 500 caractères.");
       }
 
       const [result] = await pool.execute(INSERT, [
@@ -69,7 +69,7 @@ class Comment {
       ]);
 
       if (!result || !result.insertId) {
-        throw new Error("Failed to create comment.");
+        throw new Error("Impossible de creer le commentaire.");
       }
 
       // Assurez-vous de renvoyer l'avatar_label correct
@@ -89,6 +89,7 @@ class Comment {
     }
   }
 
+  // mise a jour d'un commentaire
   static async update({ message, status, post_id, user_id, id }) {
     const UPDATE =
       "UPDATE comment SET message = ?, status = ?, post_id = ?, user_id = ? WHERE id = ?";
@@ -98,6 +99,8 @@ class Comment {
 
     return await pool.execute(UPDATE, values);
   }
+
+  // supprimer un commentaire
 
   static async remove(commentId) {
     const DELETE_REPLIES = "DELETE FROM comment WHERE parent_id = ?"; // Supprime toutes les réponses

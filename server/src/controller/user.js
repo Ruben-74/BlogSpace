@@ -71,31 +71,24 @@ const remove_user = async (req, res) => {
 };
 
 const updateAvatar = async (req, res) => {
-  if (!req.session || !req.session.user) {
-    return res.status(401).json({ msg: "User not authenticated" });
-  }
-
   const { id } = req.session.user;
   const { avatar_id } = req.params;
 
   try {
-    const response = await User.updateAvatar(avatar_id, id); // Ne pas destructurer ici
+    // Effectuer la mise à jour de l'avatar
+    const response = await User.updateAvatar(avatar_id, id);
 
-    if (response.affectedRows === 1) {
-      const results = await User.findUserWithAvatar(id); // Pas de destructuration ici
-      if (results.length > 0) {
-        const avatar = results[0].avatar; // Utiliser le premier élément
-        req.session.user.avatar = avatar;
-        return res.json({ msg: "Avatar updated", newAvatar: avatar });
-      } else {
-        return res.status(404).json({ msg: "User not found" }); // Gérer le cas où l'utilisateur n'est pas trouvé
-      }
+    // Vérification si la mise à jour a réussi
+    if (response.success) {
+      req.session.user.avatar = response.newAvatar; // Mise à jour de l'avatar dans la session
+      return res.json({ msg: "Avatar updated", newAvatar: response.newAvatar });
     } else {
-      return res.status(500).json({ msg: "Avatar not updated" });
+      return res.status(500).json({ msg: response.msg });
     }
   } catch (error) {
     console.error("Error updating avatar:", error);
-    return res.status(500).json({ msg: "Server error" });
+    // Retourner une erreur 500 avec le message d'erreur
+    return res.status(500).json({ msg: "Server error", error: error.message });
   }
 };
 

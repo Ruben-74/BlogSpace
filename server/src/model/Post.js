@@ -24,6 +24,50 @@ class Post {
     }
   }
 
+  static async getAuto() {
+    try {
+      const [datas] = await pool.execute(`
+        SELECT p.id AS id, p.title AS title, p.description AS description, 
+               p.publish_date AS publish_date, u.username AS author, 
+               i.url, c.label, a.label as avatar
+        FROM post p 
+        LEFT JOIN image i ON p.id = i.post_id 
+        LEFT JOIN post_category pc ON p.id = pc.post_id 
+        LEFT JOIN user u ON p.user_id = u.id
+        LEFT JOIN avatar a ON u.avatar_id = a.id
+        LEFT JOIN category c ON pc.category_id = c.id 
+        WHERE c.label = 'Automobile'
+        ORDER BY p.id;
+      `);
+      return datas;
+    } catch (err) {
+      console.error("Erreur dans getAuto:", err.message);
+      throw new Error("Erreur lors de la récupération des posts.");
+    }
+  }
+
+  static async getAero() {
+    try {
+      const [datas] = await pool.execute(`
+        SELECT p.id AS id, p.title AS title, p.description AS description, 
+               p.publish_date AS publish_date, u.username AS author, 
+               i.url, c.label, a.label as avatar
+        FROM post p 
+        LEFT JOIN image i ON p.id = i.post_id 
+        LEFT JOIN post_category pc ON p.id = pc.post_id 
+        LEFT JOIN user u ON p.user_id = u.id
+        LEFT JOIN avatar a ON u.avatar_id = a.id
+        LEFT JOIN category c ON pc.category_id = c.id 
+        WHERE c.label = 'Aero'
+        ORDER BY p.id;
+      `);
+      return datas;
+    } catch (err) {
+      console.error("Erreur dans getAero:", err.message);
+      throw new Error("Erreur lors de la récupération des posts.");
+    }
+  }
+
   static async FilterPost(title, label) {
     const query = `
         SELECT p.id AS id, 

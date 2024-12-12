@@ -38,7 +38,11 @@ const login = async (req, res) => {
       return res.status(400).json({ msg: "User not found" });
     }
 
-    const [[user]] = result; // Destructure the user
+    const [[user]] = result; // Destructure the user : result[0]
+
+    if (!user) {
+      return res.status(404).json({ msg: "Utilisateur non trouvé" });
+    }
 
     // Check if the user is active
     if (user.is_active === 0) {
@@ -50,8 +54,15 @@ const login = async (req, res) => {
     if (match) {
       console.log("User logged in:", user);
 
-      // Assigner l'ID correct à la session
-      req.session.user = { id: user.id, username: user.username, ...user };
+      // eviter de sauvegarder le password
+      req.session.user = {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        is_active: user.is_active,
+        avatar: user.avatar,
+      };
+
       console.log("Session user:", req.session.user);
 
       res.status(200).json({ msg: "User logged in", isLogged: true, user });

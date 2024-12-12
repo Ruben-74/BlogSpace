@@ -1,6 +1,12 @@
 import express from "express";
 import { create_post, update_post, delete_post } from "../controller/post.js";
-import { home_view, post_view, filter_posts } from "../controller/view.js";
+import {
+  home_view,
+  post_view,
+  filter_posts,
+  automobile_view,
+  aero_view,
+} from "../controller/view.js";
 import withAdminAuth from "../../middlewares/withAdminAuth.js";
 import { uploadImage } from "../../middlewares/uploads.js";
 
@@ -8,6 +14,10 @@ const router = express.Router();
 
 // GET (All) Obtenir tous les posts
 router.get("/all", home_view);
+
+router.get("/automobile", automobile_view);
+
+router.get("/aero", aero_view);
 
 // Obtenir un post par son ID  GET (READ)
 router.get("/:id", post_view);

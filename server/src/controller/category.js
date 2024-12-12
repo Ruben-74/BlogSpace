@@ -47,7 +47,6 @@ const update = async (req, res) => {
 const remove = async (req, res) => {
   try {
     const [response] = await Category.remove(req.params.id);
-    console.log(response);
     if (!response.affectedRows) {
       res.status(404).json({ msg: "Category not found" });
       return;

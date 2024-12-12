@@ -14,13 +14,25 @@ class User {
 
   static async findUserWithAvatar(id) {
     const FIND_ONE = `
-    SELECT u.id, u.username, a.label AS avatar
-    FROM user u
-    LEFT JOIN avatar a ON u.avatar_id = a.id
-    WHERE u.id = ?`;
+      SELECT u.id, u.username, a.label AS avatar
+      FROM user u
+      LEFT JOIN avatar a ON u.avatar_id = a.id
+      WHERE u.id = ?`;
+
+    if (!id) {
+      throw new Error("User ID is required");
+    }
+
     try {
       const [results] = await pool.execute(FIND_ONE, [id]);
-      return results;
+
+      if (results.length === 0) {
+        console.error("No user found with the given ID:", id);
+        return null; // Aucun utilisateur trouvé
+      }
+
+      console.log("User found with avatar:", results[0]);
+      return results[0]; // Retourne l'utilisateur trouvé avec son avatar
     } catch (error) {
       console.error("Error finding user:", error);
       throw new Error("Database error while finding user");
@@ -84,11 +96,34 @@ class User {
     const REMOVE = "DELETE FROM user WHERE id = ?";
     return await pool.execute(REMOVE, [id]);
   }
-
-  static async updateAvatar(avatar, id) {
+  static async updateAvatar(avatar_id, user_id) {
+    // SQL pour mettre à jour l'avatar de l'utilisateur dans la base de données
     const UPDATE_AVATAR = "UPDATE user SET avatar_id = ? WHERE id = ?";
-    const [result] = await pool.execute(UPDATE_AVATAR, [avatar, id]); // Assure-toi que 'result' est un tableau
-    return result; // Retourne le résultat directement
+
+    try {
+      // On effectue la mise à jour dans la base de données avec l'ID de l'avatar et de l'utilisateur
+      const [result] = await pool.execute(UPDATE_AVATAR, [avatar_id, user_id]);
+
+      // Si aucune ligne n'a été modifiée, cela signifie que l'avatar n'a pas été mis à jour
+      if (result.affectedRows === 0) {
+        return { success: false, msg: "Avatar update failed" }; // Retourne un message d'échec
+      }
+
+      // Si la mise à jour a réussi, on va chercher les informations de l'utilisateur avec son avatar
+      const user = await User.findUserWithAvatar(user_id);
+
+      // Si l'utilisateur n'est pas trouvé, on retourne une erreur
+      if (!user) {
+        return { success: false, msg: "User not found" };
+      }
+
+      // Si tout est bon, on retourne l'avatar mis à jour
+      return { success: true, newAvatar: user.avatar }; // Retourne le nouvel avatar de l'utilisateur
+    } catch (error) {
+      // Si une erreur se produit dans le processus, on affiche l'erreur dans la console et retourne un message d'erreur
+      console.error("Error updating avatar in database:", error);
+      return { success: false, msg: "Database error while updating avatar" };
+    }
   }
 
   static async toggleUserActiveStatus(id) {

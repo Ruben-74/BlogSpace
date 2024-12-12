@@ -34,19 +34,24 @@ const findAllFromID = async (req, res) => {
 // Create a new comment
 const create = async (req, res) => {
   try {
-    console.log("Data received:", req.body); // Pour vérifier ce qui est reçu
+    console.log("Data received:", req.body);
     const { message, post_id, parent_id } = req.body;
     const user_id = req.session.user ? req.session.user.id : null;
 
     // Vérification des champs requis
     if (!message || !post_id || !user_id) {
-      return res.status(400).json({ msg: "Missing required fields." });
+      return res
+        .status(400)
+        .json({ msg: "Vous avez oublié de remplir tous les champs" });
     }
 
     // Vérification de l'existence de l'utilisateur
     const userWithAvatar = await User.findUserWithAvatar(user_id);
-    if (!userWithAvatar) {
-      return res.status(400).json({ msg: "User not found." });
+
+    if (!userWithAvatar || !userWithAvatar.avatar) {
+      return res
+        .status(400)
+        .json({ msg: " Utilisateur et avatar introuvable." });
     }
 
     // Créer le commentaire
@@ -56,12 +61,14 @@ const create = async (req, res) => {
       parent_id: parent_id || null,
       user_id,
       username: userWithAvatar.username,
-      avatar_label: userWithAvatar.avatar, // Vérifie ici que l'avatar est bien passé
+      avatar_label: userWithAvatar.avatar || "user.png",
     });
 
     // Vérifiez si le commentaire a été créé
     if (!result || !result.id) {
-      return res.status(500).json({ msg: "Failed to create comment." });
+      return res
+        .status(500)
+        .json({ msg: "Impossible de creer le commantaire." });
     }
 
     res.status(201).json(result);
@@ -77,23 +84,16 @@ const update = async (req, res) => {
     const { id } = req.params;
     const { message, status, post_id, user_id } = req.body;
 
-    // Vérification des champs requis
-    if (!message || !post_id || !user_id || status === undefined) {
-      return res
-        .status(400)
-        .json({ msg: "Tous les champs doivent être remplis." });
-    }
-
     // Appel à la méthode de mise à jour
     await Comment.update({
       message,
       status,
-      post_id: post_id, // Assurez-vous que post_id est un nombre
-      user_id: user_id, // Assurez-vous que user_id est un nombre
+      post_id,
+      user_id,
       id,
     });
 
-    res.status(200).json({ msg: "Commentaire mis à jour" });
+    res.status(200).json({ msg: "Commentaire mis à jour", id });
   } catch (err) {
     console.error("Erreur lors de la mise à jour du commentaire :", err);
     res.status(500).json({ msg: err.message });
