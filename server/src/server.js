@@ -74,7 +74,7 @@ app.use(["/api/v1", "/"], router);
 
 const domain =
   process.env.NODE_ENV === "3wa_cloud"
-    ? `prenomnom.ide.3wa.io:${PORT}`
+    ? `reisfonseca.ide.3wa.io:${PORT}`
     : `localhost:${PORT}`;
 app.listen(PORT, () => {
   console.log(`Server is running at http://${domain}`);
